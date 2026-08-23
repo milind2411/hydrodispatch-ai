@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="128" fill="#090d16"/>
+  <circle cx="256" cy="256" r="210" stroke="#1e293b" stroke-width="8"/>
+  <circle cx="256" cy="256" r="180" stroke="#06b6d4" stroke-width="4" stroke-dasharray="12 12"/>
+  
+  <!-- Stylized H2 & Energy Molecule -->
+  <path d="M160 160V352M160 256H270M270 160V352" stroke="#10b981" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Number 2 Subscript -->
+  <path d="M320 280C320 260 350 250 365 265C380 280 340 320 320 352H380" stroke="#06b6d4" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Green Tech Sparkle -->
+  <circle cx="390" cy="150" r="18" fill="#10b981"/>
+  <path d="M390 110V190M350 150H430" stroke="#10b981" stroke-width="8" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,104 @@
+import React from 'react';
+import {
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Line, ComposedChart
+} from 'recharts';
+import { BatteryCharging, ArrowUpRight, CheckCircle2, ShieldAlert } from 'lucide-react';
+
+export default function StorageChart({ scenario, optimized, baseline, storageCapacityKg }) {
+  if (!scenario || !optimized) return null;
+
+  const chartData = scenario.map((sc, i) => ({
+    timestamp: sc.timestamp,
+    opt_h2_rate_kgh: (optimized[i]?.h2_kg || 0) * 4, // 15-min to hourly rate
+    opt_soc_kg: optimized[i]?.storage_soc_kg || 0,
+    opt_soc_pct: optimized[i]?.storage_soc_pct || 0,
+    offtake_flow_kgh: (optimized[i]?.offtake_flow_kg || 0) * 4,
+    base_soc_kg: baseline[i]?.storage_soc_kg || 0,
+  }));
+
+  const maxSoc = Math.max(...chartData.map(d => d.opt_soc_kg));
+  const minSoc = Math.min(...chartData.map(d => d.opt_soc_kg));
+
+  return (
+    <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-2xl mb-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5 border-b border-zinc-800/80 pb-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <BatteryCharging className="w-4 h-4 text-indigo-400" />
+            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wide">
+              Hydrogen Buffer Storage & Continuous Offtaker Delivery
+            </h3>
+          </div>
+          <p className="text-xs text-zinc-400 mt-0.5">
+            Decoupling intermittent solar/wind electrolyzer generation from 24/7 steady pipeline flow
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 text-xs">
+          <div className="bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+            <span className="text-zinc-400">Peak Storage Level:</span>
+            <span className="text-indigo-400 font-mono font-bold">{maxSoc.toFixed(1)} kg</span>
+          </div>
+          <div className="bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+            <span className="text-zinc-400">Min Buffer Level:</span>
+            <span className="text-emerald-400 font-mono font-bold">{minSoc.toFixed(1)} kg</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Chart */}
+      <div className="h-80 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart data={chartData} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
+            <defs>
+              <linearGradient id="storageGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="#6366f1" stopOpacity={0.05} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#27272a" opacity={0.6} />
+            <XAxis dataKey="timestamp" stroke="#71717a" tick={{ fontSize: 11 }} />
+            <YAxis yAxisId="kg" stroke="#71717a" tick={{ fontSize: 11 }} unit=" kg" />
+            <YAxis yAxisId="rate" orientation="right" stroke="#10b981" tick={{ fontSize: 11 }} unit=" kg/h" />
+            <Tooltip
+              contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', borderRadius: '12px', fontSize: '12px', color: '#f4f4f5' }}
+            />
+            <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '12px' }} />
+
+            <Area yAxisId="kg" type="monotone" dataKey="opt_soc_kg" stroke="#6366f1" fill="url(#storageGrad)" strokeWidth={2} name="Buffer Tank Storage (kg)" />
+            <Line yAxisId="rate" type="stepAfter" dataKey="opt_h2_rate_kgh" stroke="#10b981" strokeWidth={2} dot={false} name="Electrolyzer H2 Output (kg/h)" />
+            <Line yAxisId="rate" type="monotone" dataKey="offtake_flow_kgh" stroke="#f59e0b" strokeWidth={2} strokeDasharray="4 4" dot={false} name="Offtaker Contract Flow (kg/h)" />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Industrial Buffer Storage Feature Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 pt-4 border-t border-zinc-800/80">
+        <div className="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/70 flex items-start gap-2.5">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="text-xs">
+            <div className="font-bold text-zinc-200">Zero Offtaker Deficit</div>
+            <div className="text-zinc-400 mt-0.5">Buffer tank absorbs excess generation during midday solar peak to guarantee uninterrupted pipeline supply during night.</div>
+          </div>
+        </div>
+
+        <div className="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/70 flex items-start gap-2.5">
+          <ArrowUpRight className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+          <div className="text-xs">
+            <div className="font-bold text-zinc-200">Arbitrage Buffering</div>
+            <div className="text-zinc-400 mt-0.5">Shifts electrolysis load out of high-cost evening grid tariff bands (18:00 - 22:00) without interrupting client delivery.</div>
+          </div>
+        </div>
+
+        <div className="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/70 flex items-start gap-2.5">
+          <ShieldAlert className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+          <div className="text-xs">
+            <div className="font-bold text-zinc-200">Tank Sizing Utilization</div>
+            <div className="text-zinc-400 mt-0.5">Max storage peak: <span className="font-mono text-zinc-200 font-bold">{((maxSoc / Math.max(1, storageCapacityKg)) * 100).toFixed(0)}%</span> of total {storageCapacityKg} kg tank capacity.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

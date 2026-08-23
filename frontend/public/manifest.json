@@ -1,0 +1,25 @@
+{
+  "name": "HydroDispatch AI",
+  "short_name": "HydroDispatch",
+  "description": "Physics-informed real-time dispatch and levelized cost optimization engine for Green Hydrogen.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#06b6d4",
+  "orientation": "portrait-primary",
+  "categories": ["utilities", "productivity", "business"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "48x48 96x96",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
