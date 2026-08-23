@@ -1,11 +1,12 @@
 <div align="center">
 
 # ⚡ HydroDispatch AI
-### Physics-Informed Real-Time Dispatch & Levelized Cost (LCOH) Co-Optimization Engine for Green Hydrogen Production
+### Physics-Informed Real-Time Dispatch & Levelized Cost (LCOH) Co-Optimization Engine for Green Hydrogen & E-Fuel Production
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Pyomo](https://img.shields.io/badge/Pyomo-6.7+-FF6F00.svg?style=for-the-badge&logo=python&logoColor=white)](https://pyomo.org)
 [![HiGHS](https://img.shields.io/badge/Solver-HiGHS%20MILP-1565C0.svg?style=for-the-badge&logo=open-access&logoColor=white)](https://highs.dev)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![React](https://img.shields.io/badge/React-19.2+-61DAFB.svg?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-8.2+-646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4+-38B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
@@ -13,7 +14,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 <p align="center">
-  <strong>Bridging intermittent renewable generation (Solar PV + Wind) with multi-technology electrolyzer fleets (PEM, Alkaline, SOEC), pressurized buffer linepack tanks, and dynamic Time-of-Day (ToD) electricity tariffs to minimize LCOH (₹/kg) and extend stack operational life.</strong>
+  <strong>Bridging intermittent renewable generation (Solar PV + Wind) with multi-technology electrolyzer fleets (PEM, Alkaline, SOEC), Battery Energy Storage Systems (BESS), pressurized linepack buffer tanks, and dynamic Time-of-Day (ToD) electricity tariffs to minimize net LCOH (₹/kg), monetize co-produced Oxygen ($O_2$), and synthesize Green Ammonia ($NH_3$).</strong>
 </p>
 
 </div>
@@ -22,42 +23,36 @@
 
 ## 📌 Executive Summary
 
-**HydroDispatch AI** is an industrial-grade Energy Management System (EMS) and Supervisory Control and Data Acquisition (SCADA) optimization console designed for multi-megawatt green hydrogen production facilities. 
+**HydroDispatch AI** is an industrial-grade Energy Management System (EMS) and Supervisory Control and Data Acquisition (SCADA) optimization console designed for multi-megawatt green hydrogen and derivative e-fuel facilities. 
 
-Directly coupling electrolyzers to volatile solar and wind power creates severe thermal cycling, membrane degradation, and costly peak-tariff grid penalties. **HydroDispatch AI** solves this through a **96-interval (15-minute) Mixed-Integer Linear Programming (MILP)** plateau co-optimizer that dynamically schedules power allocation, manages buffer storage inventory, smooths electrolyzer ramping, and provides cryptographic proof-of-origin certification.
+Directly coupling electrolyzers to volatile solar and wind generation creates catastrophic thermal cycling, membrane degradation, and severe peak-tariff grid penalties. **HydroDispatch AI** solves this through a **96-interval (15-minute) Mixed-Integer Linear Programming (MILP)** plateau co-optimizer that dynamically schedules power allocation, manages BESS storage arbitrage, coordinates buffer tanks, smooths electrolyzer ramping, monetizes oxygen byproducts, and provides cryptographic proof-of-origin audit reports.
 
 ---
 
 ## 🌟 Key Capabilities
 
-### 1. ⚡ Physics-Informed MILP Dispatch Engine
-* **96-Step Horizon**: 24-hour predictive dispatch co-optimizing solar, wind, grid import, curtailment, and hydrogen production.
-* **Plateau Smoothing**: Replaces erratic direct renewable tracking with ramp-constrained setpoints, reducing stack thermal stress by **up to 86%**.
-* **Pyomo + HiGHS**: High-performance linear and integer mathematical optimization with sub-second execution times.
+### 1. ⚡ Physics-Informed MILP Co-Dispatch Engine
+* **96-Step Horizon (24 Hours)**: 15-minute predictive dispatch co-optimizing solar, wind, grid import, BESS charge/discharge, curtailment, and hydrogen production.
+* **Ramping Plateau Smoothing**: Replaces erratic direct renewable tracking with ramp-constrained setpoints ($\Delta P \le 15\%$), reducing stack thermal stress by **up to 92.5%**.
+* **Pyomo + HiGHS**: High-performance linear and integer mathematical optimization with sub-second execution times ($<85\text{ ms}$).
 
-### 2. 📱 100% Offline-First PWA & Client-Side Engine
-* **Pure Client-Side Solver (`localOptimizer.js`)**: Implements deterministic solar diurnal zenith curves, stochastic Weibull wind speed distributions, and linearized operational curves with **zero cloud runtime dependencies**.
-* **Cache-First Service Worker (`sw.js`)**: Complete standalone operation on mobile and desktop in Airplane mode.
-* **Mobile SCADA Interface**: Touch-optimized bottom navigation dock ($\ge 48\text{px}$) with safe-area inset support.
+### 2. 🔋 BESS Battery Storage Arbitrage
+* **Co-Optimized Electro-Chemical Storage**: Dynamic state-of-charge ($SOC_{\text{bess}}$) mass balance with $90.25\%$ round-trip efficiency ($\eta = 0.95$).
+* **Solar-to-Peak Tariff Shifting**: Captures excess midday solar generation and discharges power during high evening tariff windows ($₹9.5-12.0/\text{kWh}$) to avoid expensive grid imports.
+* **Degradation Cycling Cost Modeling**: Integrates battery throughput penalties ($₹0.40/\text{kWh}$) to optimize cell longevity.
 
-### 3. 🔬 Multi-Technology Electrolyzer Fleet Management
-* **PEM (Proton Exchange Membrane)**: High dynamic flexibility (10% turndown, 25%/15-min ramp), $52.0\text{ kWh/kg}$.
-* **Alkaline (AEL)**: Industrial continuous base-load (25% turndown, 10%/15-min ramp), $56.0\text{ kWh/kg}$.
-* **SOEC (Solid Oxide Steam)**: High-temperature thermal efficiency (35% turndown, 5%/15-min ramp), $41.5\text{ kWh/kg}$.
+### 3. 🫧 Byproduct Monetization & Green Ammonia ($NH_3$) Synthesis
+* **Oxygen ($O_2$) Credit Monetization**: Stoichiometrically accounts for $8.0\text{ kg } O_2 \text{ / kg } H_2$ co-produced, reducing net Levelized Cost of Hydrogen ($LCOH$) via medical/industrial gas revenue credits.
+* **Downstream Green Ammonia ($NH_3$) Coupling**: Models continuous Haber-Bosch reactor integration yielding $5.67\text{ kg } NH_3 \text{ / kg } H_2$.
 
-### 4. 💰 Dynamic Time-of-Day (ToD) Tariff Arbitrage
-* Exploits high-insolation "Solar Corridors" and off-peak grid power ($₹3.2/\text{kWh}$) to charge buffer tanks.
-* Automatically cuts grid consumption during peak hours ($₹9.5-12.0/\text{kWh}$), satisfying pipeline delivery targets via stored buffer inventory.
-* **Reduces Levelized Cost of Hydrogen (LCOH) by 15% – 28%** (down to $\sim ₹220/\text{kg H}_2$).
+### 4. 📜 Cryptographic Audit Dossier & Printable PDF Reports
+* **SHA-256 Batch Verification**: Generates immutable cryptographic hashes for every 15-minute dispatch block.
+* **Standards Compliance**: Verifies emissions intensity ($\le 2.0\text{ kg CO}_2/\text{kg } H_2$) conforming to the **National Green Hydrogen Mission (MNRE-GHM)** and **EU RFNBO** hourly additionality criteria.
+* **Automated Audit Dossier**: Instant printable PDF dossier generation via `/dispatch/export-report`.
 
-### 5. 🛡️ Cryptographic ESG Origin Certification
-* **SHA-256 Batch Hashing**: Generates tamper-proof cryptographic audit hashes for every 15-min dispatch block.
-* **Compliance Standards**: Validates carbon intensity compliance ($< 2.0\text{ kg CO}_2/\text{kg H}_2$) for the **National Green Hydrogen Mission (MNRE-GHM)** and **EU RFNBO** hourly additionality criteria.
-
-### 6. 👥 Role-Based Access Control (RBAC) Switcher
-* **Plant Operator (Level 2)**: Real-time telemetry, 15-min setpoints, thermal overrides, manual MILP triggers.
-* **Energy Trader (Level 3)**: ToD tariff sensitivity, peak vs off-peak arbitrage, financial LCOH waterfall decomposition, CSV schedule export.
-* **ESG Auditor (Level 4)**: Cryptographic batch signing, emissions intensity verification, tamper-proof certificate generation & print.
+### 5. 📱 100% Offline-First PWA & Client Twin
+* **Zero-Latency Client-Side Solver (`localOptimizer.js`)**: Pure JavaScript twin implementing identical BESS heuristics, $O_2$ monetization, and diurnal solar/wind algorithms for uninterrupted field operation.
+* **Translucent Frosted Glass SCADA UI**: Modern industrial UI with live Modbus-TCP telemetry indicators, interactive 15-min scrubber, and multi-stack routing.
 
 ---
 
@@ -65,24 +60,25 @@ Directly coupling electrolyzers to volatile solar and wind power creates severe 
 
 ```mermaid
 flowchart TD
-    subgraph Inputs ["1. Environmental & Market Telemetry"]
+    subgraph Inputs ["1. Environmental, Storage & Market Telemetry"]
         A[Solar Diurnal Curve\nZenith & Cloud Attenuation]
         B[Stochastic Wind Model\nWeibull Distribution]
         C[Time-of-Day Tariff\nOff-Peak / Solar / Peak]
-        D[Offtake Quota\nDaily Delivery Target]
+        D[BESS Battery Bank\nCapacity, Power, SOC Limits]
     end
 
     subgraph Optimization ["2. HydroDispatch AI Co-Optimizer"]
-        E[Pyomo + HiGHS Backend\nor Pure Client Local Engine]
+        E[Pyomo + HiGHS Engine\nor Pure Client Local Twin]
         E -->|Ramp Bounds & Turndown| F[Electrolyzer Fleet\nPEM / AEL / SOEC]
-        E -->|Charge / Discharge| G[Buffer Tank Storage\nLinepack Inventory]
-        E -->|Arbitrage & Curtailment| H[Grid & RE Allocator]
+        E -->|Charge / Discharge & Cycling| G[BESS Battery System]
+        E -->|Linepack Buffer Management| H[Buffer Tank Storage\n60 kg @ 350 bar]
+        E -->|Stoichiometric Coupling| I[Byproduct Monetization\nO2 Credit & NH3 Synthesis]
     end
 
     subgraph Outputs ["3. SCADA Telemetry & Financials"]
-        I[24h Setpoint Profile]
-        J[LCOH Waterfall Breakdown]
-        K[SHA-256 Compliance Ledger]
+        J[24h Setpoint Profile]
+        K[LCOH Waterfall Breakdown\nGross vs Net LCOH]
+        L[Executive Audit Report & SHA-256 Ledger]
     end
 
     Inputs --> Optimization
@@ -93,18 +89,17 @@ flowchart TD
 
 ## 📊 Mathematical & Physics Formulation
 
-### 1. Solar Diurnal Irradiance Curve
-Approximates solar elevation using the solar zenith angle cosine $\cos(\theta_z)$:
-$$\cos(\theta_z) = \sin(\delta)\sin(\phi) + \cos(\delta)\cos(\phi)\cos(\omega)$$
-$$P_{\text{solar}}(t) = P_{\text{peak}} \cdot \max(0, \cos(\theta_z))^{1.35} \cdot (1 - \text{CloudCover} \cdot \tau)$$
+### 1. Power Balance & BESS Storage Dynamics
+At each interval $t \in [1, 96]$:
+$$P_{\text{ely}}[t] + P_{\text{bess\_ch}}[t] = P_{\text{re\_used}}[t] + P_{\text{grid}}[t] + P_{\text{bess\_dis}}[t]$$
+$$SOC_{\text{bess}}[t] = SOC_{\text{bess}}[t-1] + \left( P_{\text{bess\_ch}}[t] \cdot \eta_{\text{ch}} - \frac{P_{\text{bess\_dis}}[t]}{\eta_{\text{dis}}} \right) \Delta t$$
 
-### 2. Weibull Wind Power Transformation
-Transforms wind velocity distribution into aerodynamic output:
-$$v_{\text{wind}} = c \cdot (-\ln(1 - u))^{1/k} \cdot \text{DiurnalWind}(t)$$
-$$P_{\text{wind}}(t) = P_{\text{rated}} \cdot \left(\frac{v - v_{\text{cut-in}}}{v_{\text{rated}} - v_{\text{cut-in}}}\right)^3$$
+### 2. Electrolyzer Hydrogen & Byproduct Production
+$$m_{H_2}[t] = \frac{P_{\text{ely}}[t] \cdot \Delta t}{\text{SEC}_{\text{tech}}}$$
+$$m_{O_2}[t] = 8.0 \times m_{H_2}[t], \quad m_{NH_3}[t] = 5.67 \times m_{H_2}[t]$$
 
-### 3. Levelized Cost of Hydrogen (LCOH)
-$$\text{LCOH} = \frac{\sum_{t=1}^T \left( P_{\text{re}}(t) \cdot \text{LCOE}_{\text{re}} + P_{\text{grid}}(t) \cdot \text{Tariff}(t) + R(t) \cdot \gamma_{\text{ramp}} \right) \Delta t + \text{CAPEX}_{\text{stack}} + \text{OPEX}_{\text{water/O\&M}}}{\text{Total H}_2 \text{ Produced (kg)}}$$
+### 3. Net Levelized Cost of Hydrogen ($\text{LCOH}_{\text{net}}$)
+$$\text{LCOH}_{\text{net}} = \frac{\sum_{t=1}^T \left( P_{\text{re}} C_{\text{re}} + P_{\text{grid}} \text{Tariff}[t] + P_{\text{bess}} C_{\text{bess}} + R_{\text{ramp}} C_{\text{deg}} \right) \Delta t + \text{CAPEX} + \text{OPEX}_{\text{water}} - \text{Revenue}_{O_2}}{\text{Total } H_2 \text{ Produced (kg)}}$$
 
 ---
 
@@ -115,106 +110,97 @@ hydrodispatch-ai/
 ├── backend/
 │   ├── app/
 │   │   ├── optimizer/
-│   │   │   └── dispatcher.py         # Pyomo + HiGHS MILP formulation & baseline heuristic
+│   │   │   └── dispatcher.py         # Pyomo + HiGHS MILP co-dispatch formulation
 │   │   ├── simulator/
-│   │   │   └── generation_sim.py     # 96-step renewable generation & tariff simulator
-│   │   └── main.py                   # FastAPI application with REST endpoints & Swagger UI
-│   ├── requirements.txt              # Python dependencies (pyomo, highspy, fastapi, uvicorn)
-│   ├── test_api.py                   # REST API integration tests
-│   └── test_optimizer.py             # Optimizer unit tests
+│   │   │   └── generation_sim.py     # 96-step solar/wind generation & tariff simulator
+│   │   └── main.py                   # FastAPI application with REST endpoints & audit dossier
+│   ├── Dockerfile                    # Python 3.11 production container with HiGHS
+│   ├── requirements.txt              # Backend dependencies
+│   ├── test_api.py                   # REST API & endpoint integration tests
+│   └── test_optimizer.py             # Optimizer MILP unit tests
 ├── frontend/
 │   ├── public/
 │   │   ├── manifest.json             # PWA standalone mobile manifest
 │   │   ├── sw.js                     # Cache-First offline service worker
-│   │   ├── icon.svg                  # Application vector icons
-│   │   └── images/                   # High-resolution plant assets
+│   │   └── images/                   # High-resolution facility assets
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── AnimatedBackground.jsx # Tech grid & ambient particle physics
-│   │   │   ├── ComplianceLedger.jsx   # SHA-256 batch ledger & printable certificates
-│   │   │   ├── Controls.jsx           # Interactive scenario simulation sandbox
+│   │   │   ├── ComplianceLedger.jsx   # Cryptographic ESG ledger & PDF dossier export
+│   │   │   ├── Controls.jsx           # Scenario sandbox with BESS & O2 sliders
 │   │   │   ├── DegradationTwin.jsx    # Polarization kinetics & stack health
 │   │   │   ├── DispatchChart.jsx      # 24-hr Recharts dispatch profile (Overlay/Split)
-│   │   │   ├── FinancialWaterfall.jsx # LCOH cost decomposition waterfall
+│   │   │   ├── FeatureScrollSection.jsx# Interactive 3-step physical optimization cards
+│   │   │   ├── FinancialWaterfall.jsx # LCOH cost decomposition waterfall & O2 credit
 │   │   │   ├── FleetMonitor.jsx       # 3-Stack heterogeneous fleet routing
-│   │   │   ├── KpiCards.jsx           # SCADA KPI summary metric cards
+│   │   │   ├── KpiCards.jsx           # Summary KPI metric cards & O2 yield
+│   │   │   ├── LandingHero.jsx        # Compact hero section with live preview
 │   │   │   ├── LiveSimPlayer.jsx      # 15-minute interval playback scrubber
-│   │   │   ├── MobileBottomNav.jsx    # Mobile touch navigation dock (>=48px)
 │   │   │   ├── OverviewLanding.jsx    # Platform hub & facility asset showcase
-│   │   │   ├── RoleSwitcher.jsx       # RBAC Persona Switcher Modal (React Portal)
-│   │   │   ├── Sidebar.jsx            # Desktop collapsible navigation drawer
+│   │   │   ├── RoleSwitcher.jsx       # RBAC Persona Switcher Modal
+│   │   │   ├── Sidebar.jsx            # Frosted translucent navigation drawer
 │   │   │   └── StorageChart.jsx       # Buffer tank SOC & linepack dynamics
-│   │   ├── store/
-│   │   │   └── useAuthStore.js        # Persona RBAC state manager
 │   │   ├── utils/
-│   │   │   └── localOptimizer.js      # Pure client-side mathematical solver
+│   │   │   └── localOptimizer.js      # Pure client-side zero-latency mathematical twin
 │   │   ├── App.jsx                    # Core application layout & routing
-│   │   └── main.jsx                   # PWA registration & React entry point
-│   ├── index.html                     # HTML5 shell with PWA meta tags
-│   ├── package.json                   # Node.js dependencies (React 19, Tailwind, Recharts)
-│   └── vite.config.js                 # Vite development & build configuration
-├── start_all.bat                      # One-click dual server launcher (Windows)
-├── start_backend.bat                  # Backend FastAPI server launcher (Port 8000)
-├── start_frontend.bat                 # Frontend Vite dev server launcher (Port 5173)
-├── .gitignore                         # Git exclusion rules (venv, node_modules, dist)
-└── README.md                          # Project documentation
+│   │   └── main.jsx                   # React 19 entry point & PWA registration
+│   ├── Dockerfile                    # Multi-stage production container (Node 20 -> Nginx)
+│   ├── nginx.conf                    # Nginx reverse proxy configuration & caching
+│   ├── package.json                   # Node.js dependencies
+│   └── vite.config.js                 # Vite bundler configuration
+├── docker-compose.yml                 # Production orchestration for backend & frontend
+├── .dockerignore                      # Docker ignore rules
+├── start_all.bat                      # Windows one-click dual server launcher
+├── start_backend.bat                  # Windows backend launcher (Port 8000)
+├── start_frontend.bat                 # Windows frontend launcher (Port 5173)
+├── .gitignore                         # Git exclusion rules
+└── README.md                          # Platform documentation
 ```
 
 ---
 
 ## 🚀 Quick Start Guide
 
-### Prerequisites
-* **Python**: `3.10` or higher
-* **Node.js**: `18.0` or higher (`npm 9+`)
-* **Operating System**: Windows, macOS, or Linux
+### Option 1: Docker Compose (Recommended for Production)
+
+Run the full stack with a single command:
+```bash
+docker compose up --build
+```
+* **Frontend Web App**: `http://localhost:5173`
+* **FastAPI Backend Core**: `http://localhost:8000`
+* **Swagger API Docs**: `http://localhost:8000/docs`
 
 ---
 
-### Method 1: Automated Launcher (Windows)
+### Option 2: Automated Local Launcher (Windows)
 
-Double-click or run:
+Double-click or execute:
 ```bash
 start_all.bat
 ```
-This automatically starts:
-* 🔌 **FastAPI Backend**: `http://localhost:8000`
-* 🌐 **Vite SCADA Console**: `http://localhost:5173`
 
 ---
 
-### Method 2: Manual Setup
+### Option 3: Manual Step-by-Step Setup
 
 #### 1. Backend Setup
 ```bash
-# Navigate to workspace
-cd hydrodispatch-ai
-
-# Create & activate virtual environment
+cd backend
 python -m venv venv
 
-# Windows:
+# Windows
 .\venv\Scripts\activate
-# macOS/Linux:
+# Linux/macOS
 source venv/bin/activate
 
-# Install dependencies
-pip install -r backend/requirements.txt
-
-# Start FastAPI server
-cd backend
+pip install -r requirements.txt
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 #### 2. Frontend Setup
 ```bash
-# In a separate terminal
-cd hydrodispatch-ai/frontend
-
-# Install dependencies
+cd frontend
 npm install
-
-# Start Vite dev server
 npm run dev
 ```
 
@@ -224,31 +210,32 @@ Open **[http://localhost:5173](http://localhost:5173)** in your browser!
 
 ## 📡 REST API Documentation
 
-When the backend is running, interactive Swagger API documentation is available at **[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)**.
+Interactive OpenAPI/Swagger documentation is available at **[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)**.
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `POST` | `/dispatch/run` | Executes 96-step Pyomo MILP optimizer and returns schedules, storage SOC, and financial metrics |
-| `POST` | `/dispatch/export-csv` | Streams 24-hour co-optimized dispatch schedule as downloadable CSV |
-| `GET` | `/health` | System health check and supported electrolyzer technologies |
-| `GET` | `/` | Industrial splash portal with live status indicators |
+| `POST` | `/dispatch/run` | Executes 96-step Pyomo MILP optimizer with BESS, $O_2$ monetization & Ammonia metrics |
+| `POST` | `/dispatch/export-report` | Generates official ISO 14064 & MNRE-GHM printable HTML/PDF audit dossier |
+| `POST` | `/dispatch/export-csv` | Streams 24-hour dispatch time series as downloadable CSV |
+| `GET` | `/health` | Health check probe returning active solver features and tech presets |
+| `GET` | `/` | Root splash portal with live status indicators |
 
 ---
 
-## 🛠️ Tech Stack & Dependencies
+## 🧪 Verification & Testing
 
-### Frontend
-* **Core**: React `19.2`, JavaScript (ESNext)
-* **Build Tool**: Vite `8.2`
-* **Styling**: Tailwind CSS `3.4`, Vanilla CSS, Lucide React Icons
-* **Data Visualization**: Recharts `3.10` (Area, Line, Bar, Composed charts)
-* **PWA**: Service Worker Cache-First strategy, Web App Manifest
+To run the automated mathematical test suite:
 
-### Backend
-* **Web Framework**: FastAPI, Uvicorn, Pydantic v2
-* **Optimization Modeling**: Pyomo `6.7+`
-* **Solver**: HiGHS (`appsi_highs` / `highspy`)
-* **Scientific Computing**: NumPy, Pandas
+```bash
+# 1. Optimizer Core Physics & Financial Tests
+python backend/test_optimizer.py
+
+# 2. REST API Integration & Export Tests
+python backend/test_api.py
+
+# 3. Frontend Production Compilation
+cd frontend && npm run build
+```
 
 ---
 
@@ -256,8 +243,6 @@ When the backend is running, interactive Swagger API documentation is available 
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
----
-
 <div align="center">
-  <sub>Developed for next-generation clean hydrogen infrastructure. Powered by Pyomo + HiGHS and React 19.</sub>
+  <sub>Engineered for next-generation clean hydrogen infrastructure. Powered by Pyomo, HiGHS MILP, and React 19.</sub>
 </div>
