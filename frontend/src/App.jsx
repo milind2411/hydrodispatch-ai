@@ -162,7 +162,7 @@ export default function App() {
   }, [params]);
 
   return (
-    <div className="min-h-screen bg-[#060911] text-slate-100 flex flex-col lg:flex-row antialiased selection:bg-cyan-500 selection:text-black relative">
+    <div className="min-h-screen bg-black text-slate-100 flex flex-col lg:flex-row antialiased selection:bg-cyan-500 selection:text-black relative">
       {/* Subtle Animated Background with Floating Orbs and Hydrogen Particles */}
       <AnimatedBackground />
 
@@ -180,7 +180,7 @@ export default function App() {
       {/* Main SCADA Workspace */}
       <div className="flex-1 flex flex-col min-w-0 pb-24 lg:pb-8 overflow-y-auto relative z-10">
         {/* Top Header Bar */}
-        <header className="h-16 px-4 md:px-8 flex items-center justify-between border-b border-slate-800/80 bg-[#060911]/80 backdrop-blur-xl sticky top-0 z-20">
+        <header className="h-16 px-4 md:px-8 flex items-center justify-between border-b border-slate-800/80 bg-black/80 backdrop-blur-xl sticky top-0 z-20">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <span className={`h-2.5 w-2.5 rounded-full ${isOffline ? 'bg-amber-400' : 'bg-emerald-400'} animate-pulse shadow-md shadow-emerald-400/40`} />

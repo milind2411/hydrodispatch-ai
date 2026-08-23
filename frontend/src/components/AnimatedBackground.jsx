@@ -14,7 +14,7 @@ export default function AnimatedBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#060911]">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-black">
       {/* Background Subtle Tech Grid */}
       <div className="absolute inset-0 bg-tech-grid opacity-60" />
 

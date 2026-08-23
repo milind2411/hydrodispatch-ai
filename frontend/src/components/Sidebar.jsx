@@ -91,19 +91,19 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`hidden lg:flex flex-col bg-[#080d1a]/85 backdrop-blur-2xl border-r border-slate-800/80 transition-all duration-300 ease-in-out shrink-0 select-none z-30 shadow-2xl relative ${
+      className={`hidden lg:flex flex-col bg-black/90 backdrop-blur-2xl border-r border-slate-800/80 transition-all duration-300 ease-in-out shrink-0 select-none z-30 shadow-2xl relative ${
         collapsed ? 'w-[78px]' : 'w-[276px]'
       }`}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800/80 bg-slate-950/40">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800/80 bg-black/50">
         <div className="flex items-center gap-3 overflow-hidden">
           {/* Glowing Animated App Icon */}
           <div className="relative flex items-center justify-center shrink-0">
             <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-teal-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-cyan-500/25">
               <Zap className="w-5 h-5 text-black fill-current" />
             </div>
-            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-[#080d1a] animate-pulse" />
+            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-black animate-pulse" />
           </div>
 
           {!collapsed && (
@@ -194,7 +194,7 @@ export default function Sidebar({
       </div>
 
       {/* Operator Profile Card & Live Telemetry Panel */}
-      <div className="p-3 border-t border-slate-800/80 bg-slate-950/70 space-y-3">
+      <div className="p-3 border-t border-slate-800/80 bg-black/80 space-y-3">
         {!collapsed ? (
           <>
             {/* Active Persona Clearance Card */}

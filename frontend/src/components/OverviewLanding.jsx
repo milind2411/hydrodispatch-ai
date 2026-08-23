@@ -103,8 +103,8 @@ export default function OverviewLanding({ setActiveView, setActiveSubTab, metric
           className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105"
           style={{ backgroundImage: `url('/images/plant_hero.jpg')` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#060911] via-[#060911]/90 to-[#060911]/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#060911] via-transparent to-transparent opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
 
         {/* Hero Content */}
         <div className="relative z-10 p-6 md:p-10 max-w-3xl space-y-5">
