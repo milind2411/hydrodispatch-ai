@@ -15,6 +15,9 @@ import OverviewLanding from './components/OverviewLanding';
 import AnimatedBackground from './components/AnimatedBackground';
 import { useAuth } from './store/useAuthStore';
 import { runLocalDispatch, loadLocalParams, saveLocalParams, saveSimulationToHistory } from './utils/localOptimizer';
+import {
+  Activity, BatteryCharging, Coins, Radio, SlidersHorizontal, Download, Sparkles, X, AlertCircle, RefreshCw, Cpu, ShieldCheck, Loader2
+} from 'lucide-react';
 
 const DEFAULT_PARAMS = {
   peak_solar_kw: 500.0,
