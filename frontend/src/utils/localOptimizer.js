@@ -470,3 +470,52 @@ export function runLocalDispatch(params = {}) {
 
 export const runOfflineDispatch = runLocalDispatch;
 
+// LocalStorage Persistence Helpers for 100% Offline Resilience
+const STORAGE_KEY_PARAMS = 'hydrodispatch_scenario_params_v2';
+const STORAGE_KEY_HISTORY = 'hydrodispatch_scenario_history_v2';
+
+export const saveLocalParams = (params) => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.setItem(STORAGE_KEY_PARAMS, JSON.stringify(params));
+    }
+  } catch (e) {
+    console.warn('LocalStorage save failed:', e);
+  }
+};
+
+export const loadLocalParams = (fallbackParams) => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const saved = window.localStorage.getItem(STORAGE_KEY_PARAMS);
+      if (saved) {
+        return { ...fallbackParams, ...JSON.parse(saved) };
+      }
+    }
+  } catch (e) {
+    console.warn('LocalStorage load failed:', e);
+  }
+  return fallbackParams;
+};
+
+export const saveSimulationToHistory = (result) => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const history = JSON.parse(window.localStorage.getItem(STORAGE_KEY_HISTORY) || '[]');
+      const entry = {
+        timestamp: new Date().toISOString(),
+        lcoh: result.metrics?.optimized_lcoh_rs_kg,
+        h2_kg: result.metrics?.optimized_h2_kg,
+        purity: result.metrics?.green_purity_pct,
+        hash: result.metrics?.audit_block_hash,
+      };
+      history.unshift(entry);
+      if (history.length > 20) history.pop();
+      window.localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+    }
+  } catch (e) {
+    console.warn('History save failed:', e);
+  }
+};
+
+

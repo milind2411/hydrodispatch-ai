@@ -14,55 +14,36 @@ import RoleSwitcher from './components/RoleSwitcher';
 import OverviewLanding from './components/OverviewLanding';
 import AnimatedBackground from './components/AnimatedBackground';
 import { useAuth } from './store/useAuthStore';
-import { runLocalDispatch } from './utils/localOptimizer';
+import { runLocalDispatch, loadLocalParams, saveLocalParams, saveSimulationToHistory } from './utils/localOptimizer';
 
-import {
-  Cpu, ShieldCheck, AlertCircle, RefreshCw, Loader2, Download,
-  Activity, BatteryCharging, Coins, Radio, CheckCircle, SlidersHorizontal,
-  WifiOff, Server, Award, Layers, X, Sparkles
-} from 'lucide-react';
+const DEFAULT_PARAMS = {
+  peak_solar_kw: 500.0,
+  mean_wind_kw: 200.0,
+  cloud_cover: 0.2,
+  wind_variance: 0.3,
+  peak_price: 9.5,
+  offpeak_price: 3.2,
+  re_lcoe: 2.4,
+  ely_type: "PEM",
+  ely_capacity_kw: 600.0,
+  daily_h2_target_kg: 140.0,
+  storage_capacity_kg: 60.0,
+  bess_capacity_kwh: 0.0,
+  bess_power_kw: 0.0,
+  o2_price_rs_kg: 0.0,
+};
 
 export default function App() {
   const { toastMessage, clearToast, currentPersona } = useAuth();
 
-  const [params, setParams] = useState({
-    peak_solar_kw: 500.0,
-    mean_wind_kw: 200.0,
-    cloud_cover: 0.2,
-    wind_variance: 0.3,
-    peak_price: 9.5,
-    offpeak_price: 3.2,
-    re_lcoe: 2.4,
-    ely_type: "PEM",
-    ely_capacity_kw: 600.0,
-    daily_h2_target_kg: 140.0,
-    storage_capacity_kg: 60.0,
-    bess_capacity_kwh: 0.0,
-    bess_power_kw: 0.0,
-    o2_price_rs_kg: 0.0,
-  });
+  const [params, setParams] = useState(() => loadLocalParams(DEFAULT_PARAMS));
 
   const [activeView, setActiveView] = useState('overview'); // 'overview' | 'dashboard' | 'fleet' | 'degradation' | 'sandbox' | 'compliance'
   const [activeSubTab, setActiveSubTab] = useState('dispatch'); // 'dispatch' | 'storage' | 'financial' | 'live_sim'
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const [data, setData] = useState(() => runLocalDispatch({
-    peak_solar_kw: 500.0,
-    mean_wind_kw: 200.0,
-    cloud_cover: 0.2,
-    wind_variance: 0.3,
-    peak_price: 9.5,
-    offpeak_price: 3.2,
-    re_lcoe: 2.4,
-    ely_type: "PEM",
-    ely_capacity_kw: 600.0,
-    daily_h2_target_kg: 140.0,
-    storage_capacity_kg: 60.0,
-    bess_capacity_kwh: 0.0,
-    bess_power_kw: 0.0,
-    o2_price_rs_kg: 0.0,
-  }));
+  const [data, setData] = useState(() => runLocalDispatch(loadLocalParams(DEFAULT_PARAMS)));
   const [loading, setLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
@@ -176,6 +157,7 @@ export default function App() {
   };
 
   useEffect(() => {
+    saveLocalParams(params);
     fetchDispatch();
   }, [params]);
 

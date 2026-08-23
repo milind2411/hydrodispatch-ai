@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../store/useAuthStore';
 import {
   Activity, Server, Cpu, Sliders, Award, ChevronLeft, ChevronRight,
   Radio, ShieldCheck, Zap, Download, RefreshCw, Layers, UserCheck, Shield, Sparkles,
-  Flame, BatteryCharging, Gauge, CheckCircle2, Wifi, CircleDot
+  Flame, BatteryCharging, Gauge, CheckCircle2, Wifi, CircleDot, Clock
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -16,10 +16,18 @@ export default function Sidebar({
   loading
 }) {
   const { currentPersona } = useAuth();
+  const [liveTime, setLiveTime] = useState(() => new Date().toLocaleTimeString('en-US', { hour12: false }));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setLiveTime(new Date().toLocaleTimeString('en-US', { hour12: false }));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const navSections = [
     {
-      title: 'Core Platform',
+      title: 'Real-Time SCADA',
       items: [
         {
           id: 'overview',
@@ -32,7 +40,7 @@ export default function Sidebar({
         },
         {
           id: 'dashboard',
-          label: 'Live Dispatch & SCADA',
+          label: 'Live Dispatch SCADA',
           shortLabel: 'Dispatch',
           icon: Activity,
           badge: '96 Steps',
@@ -46,7 +54,7 @@ export default function Sidebar({
       items: [
         {
           id: 'fleet',
-          label: 'Multi-Stack Fleet',
+          label: 'Fleet Health & Stacks',
           shortLabel: 'Fleet',
           icon: Server,
           badge: '3 Stacks',
@@ -55,7 +63,7 @@ export default function Sidebar({
         },
         {
           id: 'degradation',
-          label: 'Degradation Twin',
+          label: 'Degradation Digital Twin',
           shortLabel: 'Twin',
           icon: Cpu,
           badge: 'V-I Curve',
@@ -65,12 +73,12 @@ export default function Sidebar({
       ]
     },
     {
-      title: 'Simulation & Audit',
+      title: 'Optimization & Provenance',
       items: [
         {
           id: 'sandbox',
-          label: 'Scenario Sandbox',
-          shortLabel: 'Sandbox',
+          label: 'Tariff & Arbitrage Matrix',
+          shortLabel: 'Matrix',
           icon: Sliders,
           badge: 'MILP',
           accent: 'text-amber-400',
@@ -78,7 +86,7 @@ export default function Sidebar({
         },
         {
           id: 'compliance',
-          label: 'Compliance Ledger',
+          label: 'ESG Provenance Ledger',
           shortLabel: 'Ledger',
           icon: Award,
           badge: 'SHA-256',
@@ -95,7 +103,7 @@ export default function Sidebar({
         collapsed ? 'w-[78px]' : 'w-[276px]'
       }`}
     >
-      {/* Brand Header */}
+      {/* Brand Header & Live SCADA Clock */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-white/10 bg-white/[0.02] backdrop-blur-md">
         <div className="flex items-center gap-3 overflow-hidden">
           {/* Glowing Animated App Icon */}
@@ -116,10 +124,11 @@ export default function Sidebar({
                   v2.0
                 </span>
               </div>
-              <span className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400" />
-                Green H2 SCADA Core
-              </span>
+              <div className="flex items-center gap-1 text-[10px] text-slate-400 font-mono">
+                <Clock className="w-2.5 h-2.5 text-cyan-400" />
+                <span className="text-cyan-300 font-bold">{liveTime}</span>
+                <span className="text-slate-500">SCADA</span>
+              </div>
             </div>
           )}
         </div>
