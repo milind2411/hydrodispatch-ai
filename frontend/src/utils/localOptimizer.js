@@ -218,8 +218,12 @@ export function runLocalDispatch(params = {}) {
   const elyCapacityKw = params.ely_capacity_kw ?? 600.0;
   const targetH2Kg = params.daily_h2_target_kg ?? 140.0;
   const storageCapKg = params.storage_capacity_kg ?? 60.0;
+  const bessCapKwh = params.bess_capacity_kwh ?? 0.0;
+  const bessPowerKw = params.bess_power_kw ?? 0.0;
+  const o2PriceRsKg = params.o2_price_rs_kg ?? 0.0;
   const reLcoe = params.re_lcoe ?? 2.4;
 
+  const hasBess = bessCapKwh > 0 && bessPowerKw > 0;
   const spec = TECH_SPECS[elyType] || TECH_SPECS.PEM;
   const minTurndownKw = spec.min_turndown * elyCapacityKw;
   const maxRampKw = spec.max_ramp_pct * elyCapacityKw;
@@ -264,6 +268,10 @@ export function runLocalDispatch(params = {}) {
       grid_power_kw: Math.round(gridDraw * 100) / 100,
       curtail_kw: Math.round(curtailKw * 100) / 100,
       ramp_kw: Math.round(rampKw * 100) / 100,
+      bess_ch_kw: 0,
+      bess_dis_kw: 0,
+      bess_soc_kwh: 0,
+      bess_soc_pct: 0,
       h2_kg: Math.round(h2Kg * 1000) / 1000,
       storage_soc_kg: Math.round(baseCurrentSoc * 100) / 100,
       storage_soc_pct: Math.round(100.0 * baseCurrentSoc / Math.max(1.0, storageCapKg) * 10) / 10,
@@ -271,12 +279,12 @@ export function runLocalDispatch(params = {}) {
     });
   }
 
-  // 2. Co-Optimized MILP Plateau Dispatch (Plateau power smoothing + TOU arbitrage)
+  // 2. Co-Optimized MILP Plateau Dispatch (Plateau power smoothing + BESS + TOU arbitrage)
   const optimizedSchedule = [];
   let optPrevPower = (targetH2Kg * specificEnergy) / 24.0;
   let optCurrentSoc = storageCapKg * 0.3;
+  let optBessSoc = bessCapKwh * 0.5;
 
-  // Compute renewable generation profile
   const totalReKwSum = scenario.reduce((s, d) => s + d.total_re_kw, 0);
   const avgReKw = totalReKwSum / steps;
 
@@ -286,19 +294,30 @@ export function runLocalDispatch(params = {}) {
     const isSolarCorridor = sc.tariff_tier === "Solar Corridor";
 
     let desiredPower = avgReKw;
+    let bessChKw = 0;
+    let bessDisKw = 0;
+
+    if (hasBess) {
+      if (isSolarCorridor && sc.total_re_kw > avgReKw && optBessSoc < bessCapKwh * 0.95) {
+        // Charge battery during excess solar
+        bessChKw = Math.min(bessPowerKw, (sc.total_re_kw - avgReKw) * 0.6, (bessCapKwh * 0.95 - optBessSoc) / (0.95 * dt));
+        optBessSoc += bessChKw * 0.95 * dt;
+      } else if (isPeakTariff && optBessSoc > bessCapKwh * 0.15) {
+        // Discharge battery during expensive peak tariffs
+        bessDisKw = Math.min(bessPowerKw, avgReKw * 0.7, (optBessSoc - bessCapKwh * 0.15) * 0.95 / dt);
+        optBessSoc -= (bessDisKw / 0.95) * dt;
+      }
+    }
 
     if (isPeakTariff) {
-      // During peak tariff: avoid expensive grid import, run purely on available RE or drop load
-      desiredPower = Math.min(sc.total_re_kw, elyCapacityKw);
+      desiredPower = Math.min(sc.total_re_kw + bessDisKw, elyCapacityKw);
       if (desiredPower < minTurndownKw && optCurrentSoc > offtakePerStep * 2) {
-        desiredPower = 0; // Discharge buffer storage
+        desiredPower = 0;
       }
     } else if (isSolarCorridor || sc.total_re_kw > avgReKw) {
-      // Exploit solar / high RE window: produce extra and charge buffer
-      desiredPower = Math.min(elyCapacityKw, sc.total_re_kw * 1.05);
+      desiredPower = Math.min(elyCapacityKw, (sc.total_re_kw - bessChKw) * 1.05);
     } else {
-      // Smooth plateau
-      desiredPower = Math.min(elyCapacityKw, Math.max(minTurndownKw, avgReKw * 0.95));
+      desiredPower = Math.min(elyCapacityKw, Math.max(minTurndownKw, (avgReKw + bessDisKw) * 0.95));
     }
 
     // Apply strict ramp limit
@@ -310,8 +329,8 @@ export function runLocalDispatch(params = {}) {
     }
     optPrevPower = optPower;
 
-    const optReUsed = Math.min(sc.total_re_kw, optPower);
-    const optGrid = Math.max(0, optPower - optReUsed);
+    const optReUsed = Math.min(sc.total_re_kw, optPower + bessChKw);
+    const optGrid = Math.max(0, optPower + bessChKw - optReUsed - bessDisKw);
     const optCurtail = Math.max(0, sc.total_re_kw - optReUsed);
     const optH2Kg = (optPower * dt) / specificEnergy;
 
@@ -325,6 +344,10 @@ export function runLocalDispatch(params = {}) {
       grid_power_kw: Math.round(optGrid * 100) / 100,
       curtail_kw: Math.round(optCurtail * 100) / 100,
       ramp_kw: Math.round(Math.abs(clampedDelta) * 100) / 100,
+      bess_ch_kw: Math.round(bessChKw * 100) / 100,
+      bess_dis_kw: Math.round(bessDisKw * 100) / 100,
+      bess_soc_kwh: Math.round(optBessSoc * 100) / 100,
+      bess_soc_pct: hasBess ? Math.round(100.0 * optBessSoc / bessCapKwh * 10) / 10 : 0,
       h2_kg: Math.round(optH2Kg * 1000) / 1000,
       storage_soc_kg: Math.round(optCurrentSoc * 100) / 100,
       storage_soc_pct: Math.round(100.0 * optCurrentSoc / Math.max(1.0, storageCapKg) * 10) / 10,
@@ -336,21 +359,29 @@ export function runLocalDispatch(params = {}) {
   const baseTotalH2 = baselineSchedule.reduce((s, d) => s + d.h2_kg, 0) || 1.0;
   const optTotalH2 = optimizedSchedule.reduce((s, d) => s + d.h2_kg, 0) || 1.0;
 
+  const o2ProducedKg = optTotalH2 * 8.0;
+  const o2RevenueRs = o2ProducedKg * o2PriceRsKg;
+  const ammoniaProducedKg = optTotalH2 * 5.67;
+
   const baseGridCost = baselineSchedule.reduce((s, d, i) => s + d.grid_power_kw * dt * scenario[i].tariff_rs_kwh, 0);
   const baseReCost = baselineSchedule.reduce((s, d) => s + d.re_used_kw * dt * reLcoe, 0);
   const baseRampCost = baselineSchedule.reduce((s, d) => s + d.ramp_kw * spec.ramp_wear_penalty * 1.5, 0);
   const baseWaterOm = baseTotalH2 * (spec.water_cost_per_kg + spec.om_cost_per_kg);
   const baseCapex = baseTotalH2 * spec.capex_per_kg;
-  const baseTotalCost = baseCapex + baseGridCost + baseReCost + baseWaterOm + baseRampCost;
+  const baseGrossCost = baseCapex + baseGridCost + baseReCost + baseWaterOm + baseRampCost;
+  const baseTotalCost = Math.max(0, baseGrossCost - o2RevenueRs);
   const baseLcoh = baseTotalCost / baseTotalH2;
 
   const optGridCost = optimizedSchedule.reduce((s, d, i) => s + d.grid_power_kw * dt * scenario[i].tariff_rs_kwh, 0);
   const optReCost = optimizedSchedule.reduce((s, d) => s + d.re_used_kw * dt * reLcoe, 0);
   const optRampCost = optimizedSchedule.reduce((s, d) => s + d.ramp_kw * spec.ramp_wear_penalty, 0);
+  const optBessWear = optimizedSchedule.reduce((s, d) => s + (d.bess_ch_kw + d.bess_dis_kw) * dt * 0.20, 0);
   const optWaterOm = optTotalH2 * (spec.water_cost_per_kg + spec.om_cost_per_kg);
   const optCapex = optTotalH2 * spec.capex_per_kg;
-  const optTotalCost = optCapex + optGridCost + optReCost + optWaterOm + optRampCost;
+  const optGrossCost = optCapex + optGridCost + optReCost + optWaterOm + optRampCost + optBessWear;
+  const optTotalCost = Math.max(0, optGrossCost - o2RevenueRs);
   const optLcoh = optTotalCost / optTotalH2;
+  const o2CreditRsKg = o2RevenueRs / optTotalH2;
 
   const lcohDiff = Math.max(0, baseLcoh - optLcoh);
   const lcohReductionPct = Math.max(0, 100.0 * lcohDiff / baseLcoh);
@@ -372,6 +403,7 @@ export function runLocalDispatch(params = {}) {
   const gridEmissionsKg = optTotalGridKwh * 0.70;
   const co2AvoidedKg = Math.max(0, (optTotalH2 * 10.0) - gridEmissionsKg);
   const co2AvoidedTonnesYr = (co2AvoidedKg * 365.0) / 1000.0;
+  const bessThroughputKwh = optimizedSchedule.reduce((s, d) => s + d.bess_dis_kw * dt, 0);
 
   // SHA-256 audit fingerprint
   const summaryPayload = JSON.stringify({
@@ -391,25 +423,33 @@ export function runLocalDispatch(params = {}) {
     metrics: {
       optimized_cost_rs: Math.round(optTotalCost * 100) / 100,
       baseline_cost_rs: Math.round(baseTotalCost * 100) / 100,
+      gross_cost_rs: Math.round(optGrossCost * 100) / 100,
       daily_savings_rs: Math.round(dailySavingsRs * 100) / 100,
       savings_pct: Math.round(savingsPct * 10) / 10,
       optimized_lcoh_rs_kg: Math.round(optLcoh * 100) / 100,
       baseline_lcoh_rs_kg: Math.round(baseLcoh * 100) / 100,
+      gross_lcoh_rs_kg: Math.round((optGrossCost / optTotalH2) * 100) / 100,
       lcoh_reduction_pct: Math.round(lcohReductionPct * 10) / 10,
       optimized_h2_kg: Math.round(optTotalH2 * 100) / 100,
       baseline_h2_kg: Math.round(baseTotalH2 * 100) / 100,
+      o2_produced_kg: Math.round(o2ProducedKg * 100) / 100,
+      o2_revenue_rs: Math.round(o2RevenueRs * 100) / 100,
+      ammonia_produced_kg: Math.round(ammoniaProducedKg * 100) / 100,
       green_purity_pct: Math.round(greenPurityPct * 10) / 10,
       baseline_green_purity_pct: Math.round(baseGreenPurityPct * 10) / 10,
       co2_avoided_tonnes_yr: Math.round(co2AvoidedTonnesYr * 10) / 10,
       avg_ramp_optimized_kw: Math.round(optAvgRamp * 100) / 100,
       avg_ramp_baseline_kw: Math.round(baseAvgRamp * 100) / 100,
       ramp_reduction_pct: Math.round(rampReductionPct * 10) / 10,
+      bess_throughput_kwh: Math.round(bessThroughputKwh * 100) / 100,
       lcoh_breakdown_opt: {
         capex_rs_kg: spec.capex_per_kg,
         re_electricity_rs_kg: Math.round((optReCost / optTotalH2) * 10) / 10,
         grid_electricity_rs_kg: Math.round((optGridCost / optTotalH2) * 10) / 10,
         water_om_rs_kg: Math.round((optWaterOm / optTotalH2) * 10) / 10,
         degradation_rs_kg: Math.round((optRampCost / optTotalH2) * 10) / 10,
+        bess_cycling_rs_kg: Math.round((optBessWear / optTotalH2) * 10) / 10,
+        o2_byproduct_credit_rs_kg: Math.round(-o2CreditRsKg * 10) / 10,
         total_lcoh_rs_kg: Math.round(optLcoh * 100) / 100,
       },
       lcoh_breakdown_base: {
@@ -418,6 +458,8 @@ export function runLocalDispatch(params = {}) {
         grid_electricity_rs_kg: Math.round((baseGridCost / baseTotalH2) * 10) / 10,
         water_om_rs_kg: Math.round((baseWaterOm / baseTotalH2) * 10) / 10,
         degradation_rs_kg: Math.round((baseRampCost / baseTotalH2) * 10) / 10,
+        bess_cycling_rs_kg: 0,
+        o2_byproduct_credit_rs_kg: Math.round(-o2CreditRsKg * 10) / 10,
         total_lcoh_rs_kg: Math.round(baseLcoh * 100) / 100,
       },
       audit_block_hash: blockHash.slice(0, 16) + "..." + blockHash.slice(-12),
@@ -427,3 +469,4 @@ export function runLocalDispatch(params = {}) {
 }
 
 export const runOfflineDispatch = runLocalDispatch;
+

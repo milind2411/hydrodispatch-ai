@@ -91,19 +91,19 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`hidden lg:flex flex-col bg-black/90 backdrop-blur-2xl border-r border-slate-800/80 transition-all duration-300 ease-in-out shrink-0 select-none z-30 shadow-2xl relative ${
+      className={`hidden lg:flex flex-col bg-slate-950/20 backdrop-blur-3xl border-r border-white/15 transition-all duration-300 ease-in-out shrink-0 select-none z-30 shadow-2xl relative ${
         collapsed ? 'w-[78px]' : 'w-[276px]'
       }`}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800/80 bg-black/50">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-white/10 bg-white/[0.02] backdrop-blur-md">
         <div className="flex items-center gap-3 overflow-hidden">
           {/* Glowing Animated App Icon */}
           <div className="relative flex items-center justify-center shrink-0">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-teal-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-cyan-500/25">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-400 via-teal-400 to-emerald-400 flex items-center justify-center shadow-lg shadow-cyan-500/30">
               <Zap className="w-5 h-5 text-black fill-current" />
             </div>
-            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-black animate-pulse" />
+            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-black animate-pulse shadow-sm shadow-emerald-400/80" />
           </div>
 
           {!collapsed && (
@@ -112,12 +112,12 @@ export default function Sidebar({
                 <span className="font-black text-sm text-white tracking-wider uppercase font-sans">
                   HydroDispatch
                 </span>
-                <span className="text-[9px] bg-cyan-500/15 text-cyan-300 font-mono font-bold px-1.5 py-0.2 rounded-md border border-cyan-500/30">
+                <span className="text-[9px] bg-cyan-500/15 text-cyan-300 font-mono font-bold px-1.5 py-0.2 rounded-md border border-cyan-500/30 shadow-inner">
                   v2.0
                 </span>
               </div>
               <span className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400" />
                 Green H2 SCADA Core
               </span>
             </div>
@@ -127,7 +127,7 @@ export default function Sidebar({
         {/* Collapse Toggle Button */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/60 text-slate-400 hover:text-white transition shadow-sm"
+          className="p-1.5 rounded-xl glass-button text-slate-300 hover:text-white transition shadow-sm"
           title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -139,11 +139,11 @@ export default function Sidebar({
         {navSections.map((sec, idx) => (
           <div key={idx} className="space-y-1">
             {!collapsed ? (
-              <div className="px-2.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">
+              <div className="px-2.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">
                 {sec.title}
               </div>
             ) : (
-              <div className="h-px bg-slate-800/80 my-2 mx-1" />
+              <div className="h-px bg-white/10 my-2 mx-1" />
             )}
 
             {sec.items.map((item) => {
@@ -156,8 +156,8 @@ export default function Sidebar({
                   onClick={() => setActiveView(item.id)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition group relative border ${
                     isActive
-                      ? `bg-gradient-to-r ${item.activeBg} shadow-md shadow-cyan-500/5`
-                      : 'text-slate-400 hover:bg-slate-900/60 hover:text-slate-200 border-transparent hover:border-slate-800/60'
+                      ? `bg-cyan-500/15 border-cyan-400/50 text-white backdrop-blur-xl shadow-lg shadow-cyan-500/10`
+                      : 'text-slate-400 hover:bg-white/[0.06] hover:text-slate-100 border-transparent hover:border-white/10'
                   }`}
                   title={collapsed ? `${item.label} (${item.badge})` : undefined}
                 >
@@ -173,8 +173,8 @@ export default function Sidebar({
                       <span
                         className={`text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded-md border ${
                           isActive
-                            ? 'bg-slate-950/80 border-cyan-500/30 text-cyan-300'
-                            : 'bg-slate-900/80 border-slate-800 text-slate-500 group-hover:text-slate-400'
+                            ? 'bg-cyan-400/20 border-cyan-400/40 text-cyan-200 shadow-inner'
+                            : 'bg-white/5 border-white/10 text-slate-400 group-hover:text-slate-300'
                         }`}
                       >
                         {item.badge}
@@ -184,7 +184,7 @@ export default function Sidebar({
 
                   {/* Active Indicator Left Bar */}
                   {isActive && (
-                    <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-gradient-to-b from-cyan-400 to-emerald-400 rounded-r-full shadow-sm shadow-cyan-400" />
+                    <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-gradient-to-b from-cyan-400 to-emerald-400 rounded-r-full shadow-md shadow-cyan-400/80" />
                   )}
                 </button>
               );
@@ -194,11 +194,11 @@ export default function Sidebar({
       </div>
 
       {/* Operator Profile Card & Live Telemetry Panel */}
-      <div className="p-3 border-t border-slate-800/80 bg-black/80 space-y-3">
+      <div className="p-3 border-t border-white/10 bg-white/[0.01] space-y-3">
         {!collapsed ? (
           <>
             {/* Active Persona Clearance Card */}
-            <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5 shadow-inner">
+            <div className="p-2.5 rounded-xl liquid-glass-card border-white/15 space-y-1.5 backdrop-blur-xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className={`h-6 w-6 rounded-lg ${currentPersona.avatarBg} text-black font-extrabold text-[10px] flex items-center justify-center shadow-sm`}>
@@ -208,7 +208,7 @@ export default function Sidebar({
                     <span className="text-xs font-bold text-slate-200 leading-tight">
                       {currentPersona.name}
                     </span>
-                    <span className="text-[9px] text-slate-500 font-mono">
+                    <span className="text-[9px] text-slate-400 font-mono">
                       {currentPersona.id}
                     </span>
                   </div>
@@ -224,7 +224,7 @@ export default function Sidebar({
             </div>
 
             {/* Industrial SCADA Telemetry Monitor Box */}
-            <div className="space-y-1.5 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 font-mono text-[10px]">
+            <div className="space-y-1.5 liquid-glass-card p-2.5 rounded-xl border-white/15 font-mono text-[10px] backdrop-blur-xl">
               <div className="flex justify-between items-center text-slate-400">
                 <span className="flex items-center gap-1.5">
                   <Wifi className="w-3 h-3 text-emerald-400" />
@@ -252,7 +252,7 @@ export default function Sidebar({
             <button
               onClick={onRefresh}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 border border-slate-700 text-slate-200 text-xs font-bold transition shadow-md disabled:opacity-50 group hover:border-cyan-500/40"
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl glass-button text-slate-200 text-xs font-bold transition shadow-md disabled:opacity-50 group hover:text-white hover:border-cyan-500/40"
             >
               <RefreshCw className={`w-3.5 h-3.5 text-cyan-400 group-hover:rotate-180 transition-transform duration-500 ${loading ? 'animate-spin' : ''}`} />
               <span>{loading ? 'Re-Solving MILP...' : 'Sync Optimizer Core'}</span>
@@ -272,7 +272,7 @@ export default function Sidebar({
               <span
                 className={`h-2.5 w-2.5 rounded-full inline-block ${
                   isOffline ? 'bg-amber-400' : 'bg-emerald-400'
-                } animate-pulse shadow-md shadow-emerald-400/40`}
+                } animate-pulse shadow-md shadow-emerald-400/50`}
                 title={isOffline ? 'Offline Simulation Mode' : 'Live Online Modbus SCADA (18ms)'}
               />
             </div>
@@ -280,7 +280,7 @@ export default function Sidebar({
             <button
               onClick={onRefresh}
               disabled={loading}
-              className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition group shadow-md"
+              className="p-2 rounded-xl glass-button text-slate-300 hover:text-white transition group shadow-md"
               title="Sync Optimizer Core"
             >
               <RefreshCw className={`w-4 h-4 text-cyan-400 group-hover:rotate-180 transition-transform duration-500 ${loading ? 'animate-spin' : ''}`} />

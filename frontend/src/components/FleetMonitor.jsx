@@ -88,8 +88,8 @@ export default function FleetMonitor({ fleetData }) {
   return (
     <div className="space-y-6">
       {/* Fleet Overview Header Banner */}
-      <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-2xl">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-800/80 pb-4 mb-4">
+      <div className="glass-panel rounded-3xl p-6 shadow-2xl">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/10 pb-4 mb-4">
           <div>
             <div className="flex items-center gap-2">
               <Server className="w-5 h-5 text-cyan-400" />
@@ -97,60 +97,60 @@ export default function FleetMonitor({ fleetData }) {
                 Multi-Stack Fleet Dispatch & Telemetry Monitor
               </h2>
             </div>
-            <p className="text-xs text-zinc-400 mt-0.5">
+            <p className="text-xs text-slate-400 mt-0.5">
               Real-time balance-of-plant orchestration across heterogeneous PEM, Alkaline, and SOEC cell architectures
             </p>
           </div>
 
           <div className="flex items-center gap-2.5">
-            <span className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-xl text-xs font-bold font-mono">
-              <CheckCircle2 className="w-4 h-4" />
+            <span className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 px-3.5 py-1.5 rounded-xl text-xs font-bold font-mono backdrop-blur-md">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               Plant Interlocks OK
             </span>
-            <span className="bg-zinc-900 border border-zinc-800 text-zinc-300 px-3 py-1.5 rounded-xl text-xs font-mono">
+            <span className="glass-pill text-slate-300 px-3.5 py-1.5 rounded-xl text-xs font-mono">
               H2 Purity: <strong className="text-white">99.999%</strong>
             </span>
           </div>
         </div>
 
         {/* Global Fleet Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/80">
-            <span className="text-[11px] text-zinc-400 uppercase font-semibold">Total Fleet Power</span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+          <div className="glass-card p-3.5 rounded-2xl">
+            <span className="text-[11px] text-slate-400 uppercase font-semibold">Total Fleet Power</span>
             <div className="flex items-baseline gap-1 mt-1">
               <span className="text-2xl font-black text-white font-mono">{totalPowerKw}</span>
-              <span className="text-xs text-zinc-400">/ {totalCapacityKw} kW</span>
+              <span className="text-xs text-slate-400">/ {totalCapacityKw} kW</span>
             </div>
             <div className="text-[10px] text-cyan-400 mt-1 font-mono">
               Utilization: {((totalPowerKw / totalCapacityKw) * 100).toFixed(1)}%
             </div>
           </div>
 
-          <div className="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/80">
-            <span className="text-[11px] text-zinc-400 uppercase font-semibold">Hydrogen Mass Flow</span>
+          <div className="glass-card p-3.5 rounded-2xl">
+            <span className="text-[11px] text-slate-400 uppercase font-semibold">Hydrogen Mass Flow</span>
             <div className="flex items-baseline gap-1 mt-1">
               <span className="text-2xl font-black text-emerald-400 font-mono">{totalH2Kgh.toFixed(2)}</span>
-              <span className="text-xs text-zinc-400">kg/hr</span>
+              <span className="text-xs text-slate-400">kg/hr</span>
             </div>
-            <div className="text-[10px] text-zinc-400 mt-1">
+            <div className="text-[10px] text-slate-400 mt-1">
               Daily Run-Rate: {(totalH2Kgh * 24).toFixed(0)} kg/day
             </div>
           </div>
 
-          <div className="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/80">
-            <span className="text-[11px] text-zinc-400 uppercase font-semibold">DI Water Consumption</span>
+          <div className="glass-card p-3.5 rounded-2xl">
+            <span className="text-[11px] text-slate-400 uppercase font-semibold">DI Water Consumption</span>
             <div className="flex items-baseline gap-1 mt-1">
               <span className="text-2xl font-black text-cyan-400 font-mono">{totalWaterLph.toFixed(1)}</span>
-              <span className="text-xs text-zinc-400">L/hr</span>
+              <span className="text-xs text-slate-400">L/hr</span>
             </div>
-            <div className="text-[10px] text-zinc-400 mt-1 flex items-center gap-1">
+            <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
               <Droplets className="w-3 h-3 text-cyan-400" />
               Demineralized feed: 18 MΩ·cm
             </div>
           </div>
 
-          <div className="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/80">
-            <span className="text-[11px] text-zinc-400 uppercase font-semibold">Fleet Safety Margin</span>
+          <div className="glass-card p-3.5 rounded-2xl">
+            <span className="text-[11px] text-slate-400 uppercase font-semibold">Fleet Safety Margin</span>
             <div className="flex items-baseline gap-1 mt-1">
               <span className="text-2xl font-black text-white font-mono">100%</span>
             </div>
@@ -162,27 +162,37 @@ export default function FleetMonitor({ fleetData }) {
       </div>
 
       {/* Fleet Load Sharing Chart */}
-      <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-2xl">
-        <div className="flex items-center justify-between mb-4">
+      <div className="glass-panel rounded-3xl p-6 shadow-2xl">
+        <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
           <div className="flex items-center gap-2">
             <Activity className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-bold text-zinc-200 uppercase tracking-wide">
+            <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wide">
               Real-Time Stack Power Sharing & Headroom (kW)
             </h3>
           </div>
-          <span className="text-xs text-zinc-500 font-mono">3 Heterogeneous Stacks Active</span>
+          <span className="text-xs text-slate-400 font-mono">3 Heterogeneous Stacks Active</span>
         </div>
 
         <div className="h-60 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#27272a" opacity={0.6} />
-              <XAxis dataKey="name" stroke="#71717a" tick={{ fontSize: 11 }} />
-              <YAxis stroke="#71717a" tick={{ fontSize: 11 }} unit=" kW" />
-              <Tooltip contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', borderRadius: '12px', fontSize: '12px', color: '#f4f4f5' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+              <XAxis dataKey="name" stroke="#64748b" tick={{ fontSize: 11 }} />
+              <YAxis stroke="#64748b" tick={{ fontSize: 11 }} unit=" kW" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'rgba(8, 14, 28, 0.85)',
+                  backdropFilter: 'blur(16px)',
+                  borderColor: 'rgba(255, 255, 255, 0.15)',
+                  borderRadius: '16px',
+                  fontSize: '12px',
+                  color: '#f8fafc',
+                  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6)'
+                }}
+              />
               <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
               <Bar dataKey="activePower" name="Active Load (kW)" fill="#06b6d4" stackId="a" radius={[0, 0, 4, 4]} />
-              <Bar dataKey="availableHeadroom" name="Available Headroom (kW)" fill="#1e293b" stackId="a" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="availableHeadroom" name="Available Headroom (kW)" fill="rgba(255, 255, 255, 0.08)" stackId="a" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -193,31 +203,31 @@ export default function FleetMonitor({ fleetData }) {
         {stacks.map((stack) => (
           <div
             key={stack.id}
-            className={`bg-zinc-950 border rounded-2xl p-5 shadow-xl transition relative ${
+            className={`glass-card rounded-3xl p-5 shadow-xl transition relative ${
               stack.status === 'ONLINE'
-                ? 'border-zinc-800 hover:border-cyan-500/40'
-                : 'border-rose-900/40 opacity-75'
+                ? 'hover:border-cyan-500/50'
+                : 'border-rose-500/30 opacity-70'
             }`}
           >
             {/* Top Info */}
-            <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3 mb-4">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className={`h-2.5 w-2.5 rounded-full ${stack.status === 'ONLINE' ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'}`} />
+                  <span className={`h-2.5 w-2.5 rounded-full ${stack.status === 'ONLINE' ? 'bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/80' : 'bg-rose-500'}`} />
                   <span className="font-bold text-sm text-white">{stack.id}</span>
-                  <span className="text-[10px] bg-zinc-900 text-zinc-400 font-mono px-1.5 py-0.5 rounded border border-zinc-800">
+                  <span className="text-[10px] glass-pill text-slate-300 font-mono px-2 py-0.5 rounded-md">
                     {stack.capacityKw} kW
                   </span>
                 </div>
-                <div className="text-[11px] text-zinc-400 mt-0.5 font-medium">{stack.name}</div>
+                <div className="text-[11px] text-slate-400 mt-0.5 font-medium">{stack.name}</div>
               </div>
 
               <button
                 onClick={() => toggleStack(stack.id)}
-                className={`p-2 rounded-xl border transition ${
+                className={`p-2 rounded-xl transition ${
                   stack.status === 'ONLINE'
-                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
-                    : 'bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500/20'
+                    ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25'
+                    : 'bg-rose-500/15 border border-rose-500/30 text-rose-400 hover:bg-rose-500/25'
                 }`}
                 title={stack.status === 'ONLINE' ? "Set to Standby" : "Activate Stack"}
               >
@@ -227,48 +237,48 @@ export default function FleetMonitor({ fleetData }) {
 
             {/* Metrics List */}
             <div className="space-y-2.5 text-xs font-mono">
-              <div className="flex justify-between items-center py-1 border-b border-zinc-900">
-                <span className="text-zinc-400">Power Setpoint:</span>
-                <span className="text-cyan-400 font-bold">{stack.currentPowerKw} kW ({stack.setpointPct}%)</span>
+              <div className="flex justify-between items-center py-1 border-b border-white/5">
+                <span className="text-slate-400">Power Setpoint:</span>
+                <span className="text-cyan-300 font-bold">{stack.currentPowerKw} kW ({stack.setpointPct}%)</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-b border-zinc-900">
-                <span className="text-zinc-400">Avg Cell Voltage:</span>
+              <div className="flex justify-between items-center py-1 border-b border-white/5">
+                <span className="text-slate-400">Avg Cell Voltage:</span>
                 <span className="text-white font-bold">{stack.cellVoltage} V</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-b border-zinc-900">
-                <span className="text-zinc-400">Operating Temp:</span>
-                <span className={stack.stackTemp > 500 ? "text-amber-400 font-bold" : "text-emerald-400 font-bold"}>
+              <div className="flex justify-between items-center py-1 border-b border-white/5">
+                <span className="text-slate-400">Operating Temp:</span>
+                <span className={stack.stackTemp > 500 ? "text-amber-300 font-bold" : "text-emerald-300 font-bold"}>
                   {stack.stackTemp}°C
                 </span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-b border-zinc-900">
-                <span className="text-zinc-400">Faraday Efficiency:</span>
+              <div className="flex justify-between items-center py-1 border-b border-white/5">
+                <span className="text-slate-400">Faraday Efficiency:</span>
                 <span className="text-emerald-400 font-bold">{stack.faradayEfficiencyPct}%</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 border-b border-zinc-900">
-                <span className="text-zinc-400">H2 Mass Output:</span>
+              <div className="flex justify-between items-center py-1 border-b border-white/5">
+                <span className="text-slate-400">H2 Mass Output:</span>
                 <span className="text-white font-bold">{stack.h2MassFlowKgh} kg/hr</span>
               </div>
 
               <div className="flex justify-between items-center py-1">
-                <span className="text-zinc-400">Operating Life / Wear:</span>
-                <span className="text-purple-400 font-bold">{stack.hoursRun} hrs ({stack.degradationPct}% wear)</span>
+                <span className="text-slate-400">Operating Life / Wear:</span>
+                <span className="text-purple-300 font-bold">{stack.hoursRun} hrs ({stack.degradationPct}% wear)</span>
               </div>
             </div>
 
             {/* Load bar */}
-            <div className="mt-4 pt-3 border-t border-zinc-800/80">
-              <div className="flex justify-between text-[11px] text-zinc-400 mb-1">
+            <div className="mt-4 pt-3 border-t border-white/10">
+              <div className="flex justify-between text-[11px] text-slate-400 mb-1">
                 <span>Stack Loading</span>
-                <span className="font-mono text-zinc-200">{stack.setpointPct}%</span>
+                <span className="font-mono text-slate-200">{stack.setpointPct}%</span>
               </div>
-              <div className="w-full h-1.5 bg-zinc-900 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-slate-900/80 rounded-full overflow-hidden border border-white/5">
                 <div
-                  className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 rounded-full transition-all duration-500"
                   style={{ width: `${stack.setpointPct}%` }}
                 />
               </div>

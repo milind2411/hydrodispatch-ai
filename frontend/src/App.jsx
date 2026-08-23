@@ -36,7 +36,10 @@ export default function App() {
     ely_type: "PEM",
     ely_capacity_kw: 600.0,
     daily_h2_target_kg: 140.0,
-    storage_capacity_kg: 60.0
+    storage_capacity_kg: 60.0,
+    bess_capacity_kwh: 0.0,
+    bess_power_kw: 0.0,
+    o2_price_rs_kg: 0.0,
   });
 
   const [activeView, setActiveView] = useState('overview'); // 'overview' | 'dashboard' | 'fleet' | 'degradation' | 'sandbox' | 'compliance'
@@ -55,7 +58,10 @@ export default function App() {
     ely_type: "PEM",
     ely_capacity_kw: 600.0,
     daily_h2_target_kg: 140.0,
-    storage_capacity_kg: 60.0
+    storage_capacity_kg: 60.0,
+    bess_capacity_kwh: 0.0,
+    bess_power_kw: 0.0,
+    o2_price_rs_kg: 0.0,
   }));
   const [loading, setLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -162,7 +168,7 @@ export default function App() {
   }, [params]);
 
   return (
-    <div className="min-h-screen bg-black text-slate-100 flex flex-col lg:flex-row antialiased selection:bg-cyan-500 selection:text-black relative">
+    <div className="min-h-screen bg-slate-950/20 text-slate-100 flex flex-col lg:flex-row antialiased selection:bg-cyan-500 selection:text-black relative">
       {/* Subtle Animated Background with Floating Orbs and Hydrogen Particles */}
       <AnimatedBackground />
 
@@ -180,14 +186,14 @@ export default function App() {
       {/* Main SCADA Workspace */}
       <div className="flex-1 flex flex-col min-w-0 pb-24 lg:pb-8 overflow-y-auto relative z-10">
         {/* Top Header Bar */}
-        <header className="h-16 px-4 md:px-8 flex items-center justify-between border-b border-slate-800/80 bg-black/80 backdrop-blur-xl sticky top-0 z-20">
+        <header className="h-16 px-4 md:px-8 flex items-center justify-between border-b border-white/10 bg-black/40 backdrop-blur-2xl sticky top-0 z-20 shadow-lg shadow-black/40">
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className={`h-2.5 w-2.5 rounded-full ${isOffline ? 'bg-amber-400' : 'bg-emerald-400'} animate-pulse shadow-md shadow-emerald-400/40`} />
+            <div className="flex items-center gap-2.5">
+              <span className={`h-2.5 w-2.5 rounded-full ${isOffline ? 'bg-amber-400' : 'bg-emerald-400'} animate-pulse shadow-md shadow-emerald-400/50`} />
               <h1 className="text-sm md:text-base font-black text-white uppercase tracking-wider">
                 HydroDispatch SCADA
               </h1>
-              <span className="hidden sm:inline-block text-[10px] bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-mono font-bold">
+              <span className="hidden sm:inline-block text-[10px] bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 px-2.5 py-0.5 rounded-full font-mono font-bold backdrop-blur-md shadow-inner">
                 {isOffline ? 'OFFLINE TWIN' : 'v2.0 PRO'}
               </span>
             </div>
@@ -200,7 +206,7 @@ export default function App() {
             {/* Quick Mobile Drawer Opener */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 font-bold"
+              className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-button text-slate-200 font-bold"
             >
               <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
               <span>Params</span>
@@ -210,7 +216,7 @@ export default function App() {
             <button
               onClick={handleExportCsv}
               disabled={exporting || !data}
-              className="hidden sm:flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold px-3 py-1.5 rounded-xl transition shadow-md disabled:opacity-40"
+              className="hidden sm:flex items-center gap-1.5 glass-button text-slate-200 font-bold px-3.5 py-1.5 rounded-xl transition shadow-md disabled:opacity-40"
             >
               <Download className="w-3.5 h-3.5 text-cyan-400" />
               <span>{exporting ? 'Exporting...' : 'Export Schedule'}</span>
@@ -220,14 +226,14 @@ export default function App() {
 
         {/* Global Persona Toast Notification Banner */}
         {toastMessage && (
-          <div className="mx-4 md:mx-8 mt-3 p-2.5 bg-slate-900/95 border border-cyan-500/40 rounded-2xl flex items-center justify-between text-xs text-cyan-200 shadow-xl shadow-cyan-500/10 animate-in fade-in slide-in-from-top-2">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
+          <div className="mx-4 md:mx-8 mt-3 p-3 glass-panel border-cyan-500/40 rounded-2xl flex items-center justify-between text-xs text-cyan-200 shadow-xl shadow-cyan-500/10 animate-in fade-in slide-in-from-top-2">
+            <div className="flex items-center gap-2.5">
+              <Sparkles className="w-4 h-4 text-cyan-400 shrink-0 animate-pulse" />
               <span className="font-semibold">{toastMessage}</span>
             </div>
             <button
               onClick={clearToast}
-              className="p-1 text-slate-400 hover:text-white rounded-lg"
+              className="p-1 text-slate-400 hover:text-white rounded-lg transition"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -236,8 +242,8 @@ export default function App() {
 
         {/* Offline Banner if running client twin */}
         {isOffline && (
-          <div className="mx-4 md:mx-8 mt-3 p-3 bg-amber-950/40 border border-amber-800/60 rounded-2xl flex items-center justify-between text-xs text-amber-200">
-            <div className="flex items-center gap-2">
+          <div className="mx-4 md:mx-8 mt-3 p-3.5 glass-panel border-amber-500/30 rounded-2xl flex items-center justify-between text-xs text-amber-200">
+            <div className="flex items-center gap-2.5">
               <WifiOff className="w-4 h-4 text-amber-400 shrink-0" />
               <span>
                 <strong>Offline Simulation Mode:</strong> Backend disconnected. Using high-precision client-side heuristic twin. All sliders & charts are fully interactive.
@@ -245,7 +251,7 @@ export default function App() {
             </div>
             <button
               onClick={fetchDispatch}
-              className="px-2.5 py-1 bg-amber-500 text-black font-bold rounded-lg hover:bg-amber-400 transition"
+              className="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-lg transition shadow-md shadow-amber-500/20"
             >
               Retry Backend
             </button>
@@ -272,7 +278,7 @@ export default function App() {
 
               {/* Sub-tab Navigation */}
               {data && (
-                <div className="flex flex-wrap gap-2 mb-2 border-b border-slate-800/80 pb-3">
+                <div className="flex flex-wrap gap-2.5 mb-2 border-b border-white/10 pb-3.5">
                   {[
                     { id: 'dispatch', label: '24-Hour Dispatch Profile', icon: Activity, tag: 'Power & TOU' },
                     { id: 'storage', label: 'Buffer Storage & Pipeline', icon: BatteryCharging, tag: `${params.storage_capacity_kg}kg Tank` },
@@ -285,16 +291,16 @@ export default function App() {
                       <button
                         key={tab.id}
                         onClick={() => setActiveSubTab(tab.id)}
-                        className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition border ${
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition border ${
                           isActive
-                            ? 'bg-slate-900 border-cyan-500/60 text-white shadow-lg shadow-cyan-500/10'
-                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                            ? 'bg-cyan-500/15 border-cyan-400/60 text-white backdrop-blur-xl shadow-lg shadow-cyan-500/15'
+                            : 'glass-button text-slate-300 hover:text-white'
                         }`}
                       >
-                        <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-slate-500'}`} />
+                        <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
                         <span>{tab.label}</span>
                         <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono ${
-                          isActive ? 'bg-cyan-500/20 text-cyan-300' : 'bg-slate-900 text-slate-500'
+                          isActive ? 'bg-cyan-400/25 text-cyan-200 border border-cyan-400/30' : 'bg-white/5 text-slate-400'
                         }`}>
                           {tab.tag}
                         </span>

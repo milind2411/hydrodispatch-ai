@@ -11,12 +11,12 @@ from fastapi.testclient import TestClient
 client = TestClient(app)
 
 def main():
-    print('[1/3] Testing GET /health endpoint...')
+    print('[1/4] Testing GET /health endpoint...')
     res = client.get('/health')
     assert res.status_code == 200, f'Health check failed: {res.text}'
     print('      Health OK:', res.json())
 
-    print('[2/3] Testing POST /dispatch/run endpoint...')
+    print('[2/4] Testing POST /dispatch/run endpoint with BESS & O2 Monetization...')
     payload = {
         'peak_solar_kw': 600.0,
         'mean_wind_kw': 250.0,
@@ -28,7 +28,10 @@ def main():
         'ely_type': 'PEM',
         'ely_capacity_kw': 600.0,
         'daily_h2_target_kg': 140.0,
-        'storage_capacity_kg': 60.0
+        'storage_capacity_kg': 60.0,
+        'bess_capacity_kwh': 200.0,
+        'bess_power_kw': 50.0,
+        'o2_price_rs_kg': 8.0,
     }
     res = client.post('/dispatch/run', json=payload)
     assert res.status_code == 200, f'Dispatch run failed: {res.text}'
@@ -44,21 +47,26 @@ def main():
     savings = metrics['savings_pct']
     ramp_red = metrics['ramp_reduction_pct']
     h2_prod = metrics['optimized_h2_kg']
+    o2_prod = metrics['o2_produced_kg']
+    o2_rev = metrics['o2_revenue_rs']
+    ammonia = metrics['ammonia_produced_kg']
     audit_hash = metrics['audit_block_hash']
 
     print('\n' + '='*55)
-    print('            API TEST SUMMARY')
+    print('            API TEST SUMMARY (WITH BESS & O2)')
     print('='*55)
     print(f' Response Status:       HTTP {res.status_code}')
     print(f' Optimized H2 Output:   {h2_prod} kg/day')
-    print(f' Optimized LCOH:        Rs. {lcoh}/kg')
+    print(f' Co-produced O2:        {o2_prod} kg (Rs. {o2_rev} credit)')
+    print(f' Synthetic Ammonia:     {ammonia} kg NH3')
+    print(f' Net Optimized LCOH:    Rs. {lcoh}/kg')
     print(f' LCOH Reduction:        {lcoh_red}%')
     print(f' OPEX Savings:          {savings}%')
     print(f' Ramp Stress Reduction: {ramp_red}%')
     print(f' Audit Block Hash:      {audit_hash}')
     print('='*55)
 
-    print('[3/3] Testing POST /dispatch/export-csv endpoint...')
+    print('[3/4] Testing POST /dispatch/export-csv endpoint...')
     csv_res = client.post('/dispatch/export-csv', json=payload)
     assert csv_res.status_code == 200, f'Export failed: {csv_res.text}'
     assert 'text/csv' in csv_res.headers.get('content-type', '')
@@ -66,8 +74,16 @@ def main():
     assert len(csv_lines) == 97  # Header + 96 intervals
     print(f'      CSV Export OK ({len(csv_lines)} lines, {len(csv_res.text)} bytes)')
 
+    print('[4/4] Testing POST /dispatch/export-report endpoint...')
+    report_res = client.post('/dispatch/export-report', json=payload)
+    assert report_res.status_code == 200, f'Report failed: {report_res.text}'
+    assert 'HydroDispatch AI' in report_res.text
+    assert 'SHA-256' in report_res.text
+    print(f'      HTML Audit Report OK ({len(report_res.text)} bytes)')
+
     print('='*55)
     print('STATUS: FASTAPI BACKEND VERIFIED SUCCESSFULLY!')
 
 if __name__ == '__main__':
     main()
+

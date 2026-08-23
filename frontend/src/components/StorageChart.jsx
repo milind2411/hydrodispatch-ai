@@ -20,29 +20,29 @@ export default function StorageChart({ scenario, optimized, baseline, storageCap
   const minSoc = Math.min(...chartData.map(d => d.opt_soc_kg));
 
   return (
-    <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-2xl mb-6">
+    <div className="glass-panel rounded-3xl p-6 mb-6 shadow-2xl">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5 border-b border-zinc-800/80 pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5 border-b border-white/10 pb-4">
         <div>
           <div className="flex items-center gap-2">
             <BatteryCharging className="w-4 h-4 text-indigo-400" />
-            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wide">
+            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide">
               Hydrogen Buffer Storage & Continuous Offtaker Delivery
             </h3>
           </div>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-xs text-slate-400 mt-0.5">
             Decoupling intermittent solar/wind electrolyzer generation from 24/7 steady pipeline flow
           </p>
         </div>
 
         <div className="flex items-center gap-3 text-xs">
-          <div className="bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-            <span className="text-zinc-400">Peak Storage Level:</span>
-            <span className="text-indigo-400 font-mono font-bold">{maxSoc.toFixed(1)} kg</span>
+          <div className="glass-pill px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+            <span className="text-slate-400">Peak Storage Level:</span>
+            <span className="text-indigo-300 font-mono font-bold">{maxSoc.toFixed(1)} kg</span>
           </div>
-          <div className="bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-            <span className="text-zinc-400">Min Buffer Level:</span>
-            <span className="text-emerald-400 font-mono font-bold">{minSoc.toFixed(1)} kg</span>
+          <div className="glass-pill px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+            <span className="text-slate-400">Min Buffer Level:</span>
+            <span className="text-emerald-300 font-mono font-bold">{minSoc.toFixed(1)} kg</span>
           </div>
         </div>
       </div>
@@ -57,12 +57,20 @@ export default function StorageChart({ scenario, optimized, baseline, storageCap
                 <stop offset="95%" stopColor="#6366f1" stopOpacity={0.05} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#27272a" opacity={0.6} />
-            <XAxis dataKey="timestamp" stroke="#71717a" tick={{ fontSize: 11 }} />
-            <YAxis yAxisId="kg" stroke="#71717a" tick={{ fontSize: 11 }} unit=" kg" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+            <XAxis dataKey="timestamp" stroke="#64748b" tick={{ fontSize: 11 }} />
+            <YAxis yAxisId="kg" stroke="#64748b" tick={{ fontSize: 11 }} unit=" kg" />
             <YAxis yAxisId="rate" orientation="right" stroke="#10b981" tick={{ fontSize: 11 }} unit=" kg/h" />
             <Tooltip
-              contentStyle={{ backgroundColor: '#09090b', borderColor: '#27272a', borderRadius: '12px', fontSize: '12px', color: '#f4f4f5' }}
+              contentStyle={{
+                backgroundColor: 'rgba(8, 14, 28, 0.85)',
+                backdropFilter: 'blur(16px)',
+                borderColor: 'rgba(255, 255, 255, 0.15)',
+                borderRadius: '16px',
+                fontSize: '12px',
+                color: '#f8fafc',
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6)'
+              }}
             />
             <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '12px' }} />
 
@@ -74,28 +82,28 @@ export default function StorageChart({ scenario, optimized, baseline, storageCap
       </div>
 
       {/* Industrial Buffer Storage Feature Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 pt-4 border-t border-zinc-800/80">
-        <div className="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/70 flex items-start gap-2.5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 mt-4 pt-4 border-t border-white/10">
+        <div className="glass-card p-3.5 rounded-2xl flex items-start gap-2.5">
           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
           <div className="text-xs">
-            <div className="font-bold text-zinc-200">Zero Offtaker Deficit</div>
-            <div className="text-zinc-400 mt-0.5">Buffer tank absorbs excess generation during midday solar peak to guarantee uninterrupted pipeline supply during night.</div>
+            <div className="font-bold text-slate-200">Zero Offtaker Deficit</div>
+            <div className="text-slate-400 mt-0.5">Buffer tank absorbs excess generation during midday solar peak to guarantee uninterrupted pipeline supply during night.</div>
           </div>
         </div>
 
-        <div className="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/70 flex items-start gap-2.5">
+        <div className="glass-card p-3.5 rounded-2xl flex items-start gap-2.5">
           <ArrowUpRight className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
           <div className="text-xs">
-            <div className="font-bold text-zinc-200">Arbitrage Buffering</div>
-            <div className="text-zinc-400 mt-0.5">Shifts electrolysis load out of high-cost evening grid tariff bands (18:00 - 22:00) without interrupting client delivery.</div>
+            <div className="font-bold text-slate-200">Arbitrage Buffering</div>
+            <div className="text-slate-400 mt-0.5">Shifts electrolysis load out of high-cost evening grid tariff bands (18:00 - 22:00) without interrupting client delivery.</div>
           </div>
         </div>
 
-        <div className="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/70 flex items-start gap-2.5">
+        <div className="glass-card p-3.5 rounded-2xl flex items-start gap-2.5">
           <ShieldAlert className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
           <div className="text-xs">
-            <div className="font-bold text-zinc-200">Tank Sizing Utilization</div>
-            <div className="text-zinc-400 mt-0.5">Max storage peak: <span className="font-mono text-zinc-200 font-bold">{((maxSoc / Math.max(1, storageCapacityKg)) * 100).toFixed(0)}%</span> of total {storageCapacityKg} kg tank capacity.</div>
+            <div className="font-bold text-slate-200">Tank Sizing Utilization</div>
+            <div className="text-slate-400 mt-0.5">Max storage peak: <span className="font-mono text-slate-200 font-bold">{((maxSoc / Math.max(1, storageCapacityKg)) * 100).toFixed(0)}%</span> of total {storageCapacityKg} kg tank capacity.</div>
           </div>
         </div>
       </div>
