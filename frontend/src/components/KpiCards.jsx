@@ -5,7 +5,7 @@ export default function KpiCards({ metrics }) {
   if (!metrics) return null;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2.5 sm:gap-4 mb-5">
       {/* 1. LCOH Card */}
       <div className="glass-card rounded-2xl p-4 relative overflow-hidden group hover:border-emerald-500/50 transition duration-300">
         <div className="flex items-center justify-between text-slate-400 mb-2">

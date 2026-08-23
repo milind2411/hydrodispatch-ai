@@ -223,8 +223,16 @@ export default function Controls({ params, setParams, onRun, loading, isDrawer, 
 
   if (isDrawer) {
     return (
-      <div className="fixed inset-0 z-50 flex justify-end bg-black/75 backdrop-blur-md animate-in fade-in">
-        <div className="w-full max-w-xl glass-modal border-l border-white/15 p-5 h-full overflow-y-auto">
+      <div 
+        className="fixed inset-0 z-50 flex items-end sm:items-stretch justify-end bg-black/80 backdrop-blur-md animate-in fade-in"
+        onClick={onCloseDrawer}
+      >
+        <div 
+          className="w-full sm:max-w-xl glass-modal border-t sm:border-t-0 sm:border-l border-white/15 p-4 sm:p-6 max-h-[90vh] sm:max-h-full sm:h-full overflow-y-auto rounded-t-3xl sm:rounded-none pb-24 sm:pb-6 safe-area-pb"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Mobile Handle Indicator */}
+          <div className="sm:hidden w-12 h-1.5 bg-white/25 rounded-full mx-auto mb-3" />
           {content}
         </div>
       </div>

@@ -20,37 +20,37 @@ export default function StorageChart({ scenario, optimized, baseline, storageCap
   const minSoc = Math.min(...chartData.map(d => d.opt_soc_kg));
 
   return (
-    <div className="glass-panel rounded-3xl p-6 mb-6 shadow-2xl">
+    <div className="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-5 shadow-2xl">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5 border-b border-white/10 pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 border-b border-white/10 pb-3.5">
         <div>
           <div className="flex items-center gap-2">
             <BatteryCharging className="w-4 h-4 text-indigo-400" />
-            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide">
-              Hydrogen Buffer Storage & Continuous Offtaker Delivery
+            <h3 className="text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wide">
+              Buffer Storage & Pipeline Delivery
             </h3>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Decoupling intermittent solar/wind electrolyzer generation from 24/7 steady pipeline flow
+          <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+            Decoupling intermittent solar/wind generation from 24/7 steady pipeline flow
           </p>
         </div>
 
-        <div className="flex items-center gap-3 text-xs">
+        <div className="flex flex-wrap items-center gap-2 text-xs">
           <div className="glass-pill px-3 py-1.5 rounded-xl flex items-center gap-1.5">
-            <span className="text-slate-400">Peak Storage Level:</span>
+            <span className="text-slate-400">Peak Storage:</span>
             <span className="text-indigo-300 font-mono font-bold">{maxSoc.toFixed(1)} kg</span>
           </div>
           <div className="glass-pill px-3 py-1.5 rounded-xl flex items-center gap-1.5">
-            <span className="text-slate-400">Min Buffer Level:</span>
+            <span className="text-slate-400">Min Buffer:</span>
             <span className="text-emerald-300 font-mono font-bold">{minSoc.toFixed(1)} kg</span>
           </div>
         </div>
       </div>
 
       {/* Main Chart */}
-      <div className="h-80 w-full">
+      <div className="h-72 sm:h-80 md:h-96 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={chartData} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
+          <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
             <defs>
               <linearGradient id="storageGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} />

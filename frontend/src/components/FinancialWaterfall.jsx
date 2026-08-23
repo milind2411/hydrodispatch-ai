@@ -119,17 +119,17 @@ export default function FinancialWaterfall({ metrics }) {
   };
 
   return (
-    <div className="glass-panel rounded-3xl p-6 mb-6 shadow-2xl">
+    <div className="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-5 shadow-2xl">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 border-b border-white/10 pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 border-b border-white/10 pb-3.5">
         <div>
           <div className="flex items-center gap-2">
             <Coins className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide">
-              Levelized Cost of Hydrogen (LCOH) Financial Waterfall Breakdown
+            <h3 className="text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wide">
+              LCOH Financial Waterfall Breakdown
             </h3>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
             Decomposed levelized cost structure per kilogram of Green Hydrogen (₹/kg H2)
           </p>
         </div>

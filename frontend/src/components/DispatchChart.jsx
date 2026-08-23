@@ -30,57 +30,57 @@ export default function DispatchChart({ scenario, optimized, baseline }) {
   const hasBessData = chartData.some(d => d.bess_ch_kw > 0 || d.bess_dis_kw > 0);
 
   return (
-    <div className="glass-panel rounded-3xl p-6 mb-6 shadow-2xl">
+    <div className="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-5 shadow-2xl">
       {/* Header with title and view mode buttons */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5 border-b border-white/10 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-white/10 pb-3.5">
         <div>
           <div className="flex items-center gap-2">
             <Activity className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide">
-              24-Hour Horizon Power Dispatch & Grid TOU Optimization
+            <h3 className="text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wide">
+              24-Hour Power Dispatch & Grid TOU
             </h3>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Physics-informed MILP plateau dispatch (96 intervals @ 15 min) vs erratic unbuffered baseline
+          <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+            Physics-informed MILP plateau dispatch (96 intervals @ 15 min) vs erratic baseline
           </p>
         </div>
 
-        <div className="flex glass-pill p-1 rounded-xl text-xs">
+        <div className="flex glass-pill p-1 rounded-xl text-xs overflow-x-auto no-scrollbar shrink-0">
           <button
             onClick={() => setView('overlay')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg font-semibold transition ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap transition ${
               view === 'overlay' ? 'bg-cyan-400 text-black shadow-md shadow-cyan-400/20' : 'text-slate-400 hover:text-white'
             }`}
           >
             <Activity className="w-3.5 h-3.5" />
-            Overlay Dispatch
+            Overlay
           </button>
           <button
             onClick={() => setView('allocation')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg font-semibold transition ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap transition ${
               view === 'allocation' ? 'bg-cyan-400 text-black shadow-md shadow-cyan-400/20' : 'text-slate-400 hover:text-white'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            RE vs Grid Power
+            RE vs Grid
           </button>
           <button
             onClick={() => setView('sideBySide')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg font-semibold transition ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap transition ${
               view === 'sideBySide' ? 'bg-cyan-400 text-black shadow-md shadow-cyan-400/20' : 'text-slate-400 hover:text-white'
             }`}
           >
             <Split className="w-3.5 h-3.5" />
-            Split View
+            Split
           </button>
         </div>
       </div>
 
       {/* Main View Render */}
       {view === 'overlay' && (
-        <div className="h-96 w-full">
+        <div className="h-72 sm:h-80 md:h-96 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={chartData} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
+            <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
               <defs>
                 <linearGradient id="reSolarGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#0284c7" stopOpacity={0.4} />

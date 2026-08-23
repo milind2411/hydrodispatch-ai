@@ -290,12 +290,12 @@ export default function App() {
 
               {/* Sub-tab Navigation */}
               {data && (
-                <div className="flex flex-wrap gap-2.5 mb-2 border-b border-white/10 pb-3.5">
+                <div className="flex items-center gap-2 mb-3 border-b border-white/10 pb-3 overflow-x-auto no-scrollbar touch-scroll py-0.5">
                   {[
-                    { id: 'dispatch', label: '24-Hour Dispatch Profile', icon: Activity, tag: 'Power & TOU' },
-                    { id: 'storage', label: 'Buffer Storage & Pipeline', icon: BatteryCharging, tag: `${params.storage_capacity_kg}kg Tank` },
-                    { id: 'financial', label: 'LCOH Cost Waterfall', icon: Coins, tag: `-₹${(data.metrics.baseline_lcoh_rs_kg - data.metrics.optimized_lcoh_rs_kg).toFixed(1)}/kg` },
-                    { id: 'live_sim', label: 'Real-Time SCADA Simulator', icon: Radio, tag: '15-min Scrubber' },
+                    { id: 'dispatch', label: '24-Hour Dispatch', icon: Activity, tag: 'Power & TOU' },
+                    { id: 'storage', label: 'Buffer Storage', icon: BatteryCharging, tag: `${params.storage_capacity_kg}kg` },
+                    { id: 'financial', label: 'LCOH Waterfall', icon: Coins, tag: `-₹${(data.metrics.baseline_lcoh_rs_kg - data.metrics.optimized_lcoh_rs_kg).toFixed(1)}` },
+                    { id: 'live_sim', label: 'Live Simulator', icon: Radio, tag: '15-min' },
                   ].map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeSubTab === tab.id;
@@ -303,15 +303,15 @@ export default function App() {
                       <button
                         key={tab.id}
                         onClick={() => setActiveSubTab(tab.id)}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition border ${
+                        className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition border ${
                           isActive
                             ? 'bg-cyan-500/15 border-cyan-400/60 text-white backdrop-blur-xl shadow-lg shadow-cyan-500/15'
                             : 'glass-button text-slate-300 hover:text-white'
                         }`}
                       >
-                        <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
+                        <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
                         <span>{tab.label}</span>
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono ${
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-mono ${
                           isActive ? 'bg-cyan-400/25 text-cyan-200 border border-cyan-400/30' : 'bg-white/5 text-slate-400'
                         }`}>
                           {tab.tag}
