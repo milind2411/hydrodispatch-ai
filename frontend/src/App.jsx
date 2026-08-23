@@ -68,14 +68,25 @@ export default function App() {
   const [isOffline, setIsOffline] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
 
+  const getApiUrl = (endpoint) => {
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
+        return `http://${hostname}:8000${endpoint}`;
+      }
+    }
+    return `http://127.0.0.1:8000${endpoint}`;
+  };
+
   const fetchDispatch = async () => {
     setLoading(true);
     setErrorMsg(null);
     try {
-      // Attempt backend call (try localhost first, fallback to 127.0.0.1)
+      // Dynamic network-aware API endpoint resolution for mobile & desktop
+      const primaryUrl = getApiUrl('/dispatch/run');
       let res;
       try {
-        res = await fetch('http://localhost:8000/dispatch/run', {
+        res = await fetch(primaryUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(params),
@@ -93,12 +104,12 @@ export default function App() {
       setData(json);
       setIsOffline(false);
     } catch (err) {
-      console.warn('Backend unavailable, using pure client-side mathematical solver:', err);
-      // Pure client-side mathematical solver fallback
+      console.warn('Backend unavailable on network, running in-device mobile mathematical engine:', err);
+      // Pure in-device mathematical solver fallback (works 100% offline on mobile)
       const localResult = runLocalDispatch(params);
       setData(localResult);
       setIsOffline(true);
-      setErrorMsg('FastAPI core disconnected. Pure client-side mathematical solver active.');
+      setErrorMsg('FastAPI remote unreachable. In-device mobile solver active.');
     } finally {
       setLoading(false);
     }
@@ -108,9 +119,10 @@ export default function App() {
     setExporting(true);
     try {
       if (!isOffline) {
+        const primaryUrl = getApiUrl('/dispatch/export-csv');
         let res;
         try {
-          res = await fetch('http://localhost:8000/dispatch/export-csv', {
+          res = await fetch(primaryUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(params),
