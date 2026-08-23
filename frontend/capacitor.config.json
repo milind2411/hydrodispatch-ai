@@ -1,0 +1,18 @@
+{
+  "appId": "com.hydrodispatch.ai",
+  "appName": "HydroDispatch AI",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#060911",
+      "showSpinner": true,
+      "spinnerColor": "#06b6d4"
+    }
+  }
+}
