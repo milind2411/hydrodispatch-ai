@@ -90,6 +90,38 @@ if ('serviceWorker' in navigator) {
   }
 }
 
+// Native Mobile Capacitor Integrations
+const initNativeMobile = async () => {
+  try {
+    const { Capacitor } = await import('@capacitor/core');
+    if (Capacitor.isNativePlatform()) {
+      const { StatusBar, Style } = await import('@capacitor/status-bar');
+      const { SplashScreen } = await import('@capacitor/splash-screen');
+      const { App: CapApp } = await import('@capacitor/app');
+
+      // Set dark status bar
+      await StatusBar.setStyle({ style: Style.Dark });
+      await StatusBar.setBackgroundColor({ color: '#060911' }).catch(() => {});
+
+      // Hide native splash screen
+      await SplashScreen.hide();
+
+      // Hardware back button handler
+      CapApp.addListener('backButton', ({ canGoBack }) => {
+        if (!canGoBack) {
+          CapApp.exitApp();
+        } else {
+          window.history.back();
+        }
+      });
+    }
+  } catch (e) {
+    // Silent fail if not in native container
+  }
+};
+
+initNativeMobile();
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ErrorBoundary>
