@@ -1,27 +1,30 @@
 services:
   - type: web
     name: hydrodispatch-backend
-    env: python
+    runtime: python
+    rootDir: backend
     region: oregon
     plan: free
-    buildCommand: "cd backend && pip install -r requirements.txt"
-    startCommand: "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
 
   - type: web
     name: hydrodispatch-frontend
-    env: static
+    runtime: static
+    rootDir: frontend
     region: oregon
-    buildCommand: "cd frontend && npm install && npm run build"
-    staticPublishPath: "frontend/dist"
+    plan: free
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: "./dist"
     envVars:
       - key: VITE_API_URL
         fromService:
           type: web
           name: hydrodispatch-backend
-          property: host
+          envVarKey: RENDER_EXTERNAL_URL
     routes:
       - type: rewrite
         source: /*
