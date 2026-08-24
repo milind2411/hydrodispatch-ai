@@ -13,10 +13,11 @@ import ComplianceLedger from './components/ComplianceLedger';
 import RoleSwitcher from './components/RoleSwitcher';
 import OverviewLanding from './components/OverviewLanding';
 import AnimatedBackground from './components/AnimatedBackground';
+import MobileSimulator from './components/MobileSimulator';
 import { useAuth } from './store/useAuthStore';
 import { runLocalDispatch, loadLocalParams, saveLocalParams, saveSimulationToHistory } from './utils/localOptimizer';
 import {
-  Activity, BatteryCharging, Coins, Radio, SlidersHorizontal, Download, Sparkles, X, AlertCircle, RefreshCw, Cpu, ShieldCheck, Loader2, WifiOff
+  Activity, BatteryCharging, Coins, Radio, SlidersHorizontal, Download, Sparkles, X, AlertCircle, RefreshCw, Cpu, ShieldCheck, Loader2, WifiOff, Smartphone
 } from 'lucide-react';
 
 const DEFAULT_PARAMS = {
@@ -45,6 +46,7 @@ export default function App() {
   const [activeSubTab, setActiveSubTab] = useState('dispatch'); // 'dispatch' | 'storage' | 'financial' | 'live_sim'
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isMobileSimulatorOpen, setIsMobileSimulatorOpen] = useState(false);
 
   const [data, setData] = useState(() => runLocalDispatch(loadLocalParams(DEFAULT_PARAMS)));
   const [loading, setLoading] = useState(false);
@@ -197,6 +199,16 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-2 md:gap-3 text-xs">
+            {/* Interactive Desktop Mobile Simulator Trigger */}
+            <button
+              onClick={() => setIsMobileSimulatorOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 hover:from-cyan-500/30 hover:to-emerald-500/30 border border-cyan-400/40 text-cyan-300 font-bold transition shadow-sm"
+              title="Open Interactive Mobile Device Simulator"
+            >
+              <Smartphone className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline">Mobile Demo</span>
+            </button>
+
             {/* RBAC Persona Switcher Widget */}
             <RoleSwitcher />
 
@@ -404,6 +416,135 @@ export default function App() {
         onOpenDrawer={() => setIsDrawerOpen(true)}
         activeRole={currentPersona.roleKey}
       />
+
+      {/* Interactive Desktop Mobile Device Simulator Overlay */}
+      {isMobileSimulatorOpen && (
+        <MobileSimulator
+          isOpen={isMobileSimulatorOpen}
+          onClose={() => setIsMobileSimulatorOpen(false)}
+        >
+          <div className="flex-1 flex flex-col pb-24 relative min-h-full">
+            {/* Mobile Header Inside Simulator */}
+            <header className="h-14 px-3.5 flex items-center justify-between border-b border-white/10 bg-black/50 backdrop-blur-xl sticky top-0 z-20 shadow-md">
+              <div className="flex items-center gap-2">
+                <span className={`h-2.5 w-2.5 rounded-full ${isOffline ? 'bg-amber-400' : 'bg-emerald-400'} animate-pulse`} />
+                <span className="text-xs font-black text-white uppercase tracking-wider font-sans">
+                  HydroDispatch SCADA
+                </span>
+                <span className="text-[9px] bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 px-1.5 py-0.2 rounded-md font-mono font-bold">
+                  MOBILE
+                </span>
+              </div>
+              <RoleSwitcher />
+            </header>
+
+            {/* Mobile Content View Inside Simulator */}
+            <main className="p-3.5 space-y-4 flex-1">
+              {activeView === 'overview' && (
+                <OverviewLanding
+                  setActiveView={setActiveView}
+                  setActiveSubTab={setActiveSubTab}
+                  onRunSimulation={fetchDispatch}
+                  metrics={data?.metrics}
+                  isOffline={isOffline}
+                />
+              )}
+
+              {activeView === 'dashboard' && (
+                <>
+                  {data && <KpiCards metrics={data.metrics} />}
+
+                  {/* Horizontal Sub-tab bar */}
+                  {data && (
+                    <div className="flex items-center gap-2 mb-3 border-b border-white/10 pb-2.5 overflow-x-auto no-scrollbar touch-scroll">
+                      {[
+                        { id: 'dispatch', label: '24h Dispatch', icon: Activity },
+                        { id: 'storage', label: 'Storage Tank', icon: BatteryCharging },
+                        { id: 'financial', label: 'LCOH Waterfall', icon: Coins },
+                        { id: 'live_sim', label: 'Live Sim', icon: Radio },
+                      ].map((tab) => {
+                        const Icon = tab.icon;
+                        const isActive = activeSubTab === tab.id;
+                        return (
+                          <button
+                            key={tab.id}
+                            onClick={() => setActiveSubTab(tab.id)}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition border ${
+                              isActive
+                                ? 'bg-cyan-500/20 border-cyan-400/50 text-cyan-300'
+                                : 'glass-button text-slate-300'
+                            }`}
+                          >
+                            <Icon className="w-3.5 h-3.5" />
+                            <span>{tab.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {data && activeSubTab === 'dispatch' && (
+                    <DispatchChart
+                      scenario={data.scenario}
+                      optimized={data.optimized_schedule}
+                      baseline={data.baseline_schedule}
+                    />
+                  )}
+
+                  {data && activeSubTab === 'storage' && (
+                    <StorageChart
+                      scenario={data.scenario}
+                      optimized={data.optimized_schedule}
+                      baseline={data.baseline_schedule}
+                      storageCapacityKg={params.storage_capacity_kg}
+                    />
+                  )}
+
+                  {data && activeSubTab === 'financial' && (
+                    <FinancialWaterfall metrics={data.metrics} />
+                  )}
+
+                  {data && activeSubTab === 'live_sim' && (
+                    <LiveSimPlayer
+                      scenario={data.scenario}
+                      optimized={data.optimized_schedule}
+                      baseline={data.baseline_schedule}
+                      metrics={data.metrics}
+                      storageCapacityKg={params.storage_capacity_kg}
+                    />
+                  )}
+                </>
+              )}
+
+              {activeView === 'fleet' && <FleetMonitor />}
+              {activeView === 'degradation' && <DegradationTwin />}
+              {activeView === 'sandbox' && (
+                <Controls
+                  params={params}
+                  setParams={setParams}
+                  onRun={fetchDispatch}
+                  loading={loading}
+                />
+              )}
+              {activeView === 'compliance' && (
+                <ComplianceLedger
+                  metrics={data?.metrics}
+                  scenario={data?.scenario}
+                  optimized={data?.optimized_schedule}
+                />
+              )}
+            </main>
+
+            {/* In-Simulator Mobile Bottom Dock */}
+            <MobileBottomNav
+              activeView={activeView}
+              setActiveView={setActiveView}
+              onOpenDrawer={() => setIsDrawerOpen(true)}
+              activeRole={currentPersona.roleKey}
+            />
+          </div>
+        </MobileSimulator>
+      )}
     </div>
   );
 }
