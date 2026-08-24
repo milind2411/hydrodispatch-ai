@@ -70,6 +70,10 @@ def solve_dispatch(
     if daily_h2_target_kg is None or daily_h2_target_kg <= 0:
         daily_h2_target_kg = (electrolyzer_max_kw * 24 * 0.55) / kwh_per_kg_h2
 
+    re_avail_arr = scenario_df["total_re_kw"].to_numpy()
+    tariff_arr = scenario_df["tariff_rs_kwh"].to_numpy()
+    re_lcoe_arr = scenario_df["re_lcoe_rs_kwh"].to_numpy()
+
     model = pyo.ConcreteModel(name="HydroDispatch_MILP")
     model.T = pyo.Set(initialize=range(T))
 
@@ -81,7 +85,8 @@ def solve_dispatch(
     model.p_curtail = pyo.Var(model.T, within=pyo.NonNegativeReals)
     model.p_grid = pyo.Var(model.T, within=pyo.NonNegativeReals)
     model.u_on = pyo.Var(model.T, within=pyo.Binary)
-    model.ramp = pyo.Var(model.T, within=pyo.NonNegativeReals)
+    model.ramp_up = pyo.Var(model.T, bounds=(0, max_ramp_kw))
+    model.ramp_down = pyo.Var(model.T, bounds=(0, max_ramp_kw))
     model.soc_tank = pyo.Var(model.T, bounds=(0, max(10.0, storage_capacity_kg)))
     model.s_deficit = pyo.Var(within=pyo.NonNegativeReals)  # Elastic slack for feasibility
 
@@ -94,7 +99,7 @@ def solve_dispatch(
         model.p_bess_dis = pyo.Var(model.T, bounds=(0, 0))
         model.soc_bess = pyo.Var(model.T, bounds=(0, 0))
 
-    # 1. Minimum Turndown & Maximum Operating Limits
+    # 1. Minimum Turndown & Maximum Operating Limits (Tight Big-M bounds to rated capacity)
     def min_load_rule(m, t):
         return m.p_ely[t] >= m.u_on[t] * (min_turndown * electrolyzer_max_kw)
     model.min_load_con = pyo.Constraint(model.T, rule=min_load_rule)
@@ -111,8 +116,7 @@ def solve_dispatch(
     model.power_balance_con = pyo.Constraint(model.T, rule=power_balance_rule)
 
     def re_avail_rule(m, t):
-        re_avail = float(scenario_df.loc[t, "total_re_kw"])
-        return m.p_re_used[t] + m.p_curtail[t] == re_avail
+        return m.p_re_used[t] + m.p_curtail[t] == float(re_avail_arr[t])
     model.re_avail_con = pyo.Constraint(model.T, rule=re_avail_rule)
 
     # 3. BESS Dynamic Energy Conservation (Round-trip efficiency = 90.25%, eta = 0.95 each way)
@@ -124,27 +128,16 @@ def solve_dispatch(
             return m.soc_bess[t] == m.soc_bess[t-1] + (m.p_bess_ch[t] * 0.95 - m.p_bess_dis[t] / 0.95) * dt
         model.bess_soc_con = pyo.Constraint(model.T, rule=bess_soc_rule)
 
-    # 4. Ramping Physics Constraints
-    def ramp_up_rule(m, t):
+    # 4. Ramping Physics Constraints (Nonlinear-free linear ramp decomposition)
+    def ramp_eq_rule(m, t):
         if t == 0:
             return pyo.Constraint.Skip
-        return m.p_ely[t] - m.p_ely[t-1] <= m.ramp[t]
-    model.ramp_up_con = pyo.Constraint(model.T, rule=ramp_up_rule)
-
-    def ramp_down_rule(m, t):
-        if t == 0:
-            return pyo.Constraint.Skip
-        return m.p_ely[t-1] - m.p_ely[t] <= m.ramp[t]
-    model.ramp_down_con = pyo.Constraint(model.T, rule=ramp_down_rule)
-
-    def ramp_limit_rule(m, t):
-        return m.ramp[t] <= max_ramp_kw
-    model.ramp_limit_con = pyo.Constraint(model.T, rule=ramp_limit_rule)
+        return m.p_ely[t] - m.p_ely[t-1] == m.ramp_up[t] - m.ramp_down[t]
+    model.ramp_eq_con = pyo.Constraint(model.T, rule=ramp_eq_rule)
 
     # 5. Daily Hydrogen Target Constraint
     def target_h2_rule(m):
-        total_prod = sum(m.p_ely[t] * dt / kwh_per_kg_h2 for t in m.T)
-        return total_prod + m.s_deficit >= daily_h2_target_kg
+        return sum(m.p_ely[t] * (dt / kwh_per_kg_h2) for t in m.T) + m.s_deficit >= daily_h2_target_kg
     model.target_h2_con = pyo.Constraint(rule=target_h2_rule)
 
     # 6. H2 Storage Tank Dynamic Mass Balance
@@ -152,7 +145,7 @@ def solve_dispatch(
     initial_soc = storage_capacity_kg * 0.3
 
     def storage_rule(m, t):
-        h2_step = m.p_ely[t] * dt / kwh_per_kg_h2
+        h2_step = m.p_ely[t] * (dt / kwh_per_kg_h2)
         if t == 0:
             return m.soc_tank[t] == initial_soc + h2_step - offtake_per_step
         return m.soc_tank[t] == m.soc_tank[t-1] + h2_step - offtake_per_step
@@ -164,30 +157,63 @@ def solve_dispatch(
 
     # 7. Objective Function: Grid Cost + RE Cost + Ramp Degradation + Curtailment + BESS Cycling
     def objective_rule(m):
-        cost_grid = sum(m.p_grid[t] * dt * float(scenario_df.loc[t, "tariff_rs_kwh"]) for t in m.T)
-        cost_re = sum(m.p_re_used[t] * dt * float(scenario_df.loc[t, "re_lcoe_rs_kwh"]) for t in m.T)
-        cost_ramp = sum(m.ramp[t] * ramp_wear_penalty for t in m.T)
+        cost_grid = sum(m.p_grid[t] * (dt * tariff_arr[t]) for t in m.T)
+        cost_re = sum(m.p_re_used[t] * (dt * re_lcoe_arr[t]) for t in m.T)
+        cost_ramp = sum((m.ramp_up[t] + m.ramp_down[t]) * ramp_wear_penalty for t in m.T)
         cost_curtail = sum(m.p_curtail[t] * 0.05 for t in m.T)
         penalty_deficit = m.s_deficit * 2000.0  # heavy penalty if quota missed
-        cost_bess = sum((m.p_bess_ch[t] + m.p_bess_dis[t]) * dt * 0.20 for t in m.T) if has_bess else 0.0
+        cost_bess = sum((m.p_bess_ch[t] + m.p_bess_dis[t]) * (dt * 0.20) for t in m.T) if has_bess else 0.0
         return cost_grid + cost_re + cost_ramp + cost_curtail + penalty_deficit + cost_bess
     model.obj = pyo.Objective(rule=objective_rule, sense=pyo.minimize)
 
-    # Solve with HiGHS
-    solver = pyo.SolverFactory("appsi_highs")
+    # Direct APPSI HiGHS solver interface with fallbacks to highs or standard LP
+    try:
+        solver = pyo.SolverFactory("appsi_highs")
+        if not solver.available():
+            solver = pyo.SolverFactory("highs")
+            if not solver.available():
+                solver = pyo.SolverFactory("glpk")
+    except Exception:
+        try:
+            solver = pyo.SolverFactory("highs")
+            if not solver.available():
+                solver = pyo.SolverFactory("glpk")
+        except Exception:
+            solver = pyo.SolverFactory("glpk")
+
+    # Configure runtime parameters for real-time dispatch: 1% MIP gap, 2.0s time limit
+    try:
+        if hasattr(solver, 'options'):
+            solver.options["mip_rel_gap"] = 0.01
+            solver.options["time_limit"] = 2.0
+            solver.options["threads"] = 4
+        if hasattr(solver, 'highs_options'):
+            solver.highs_options["mip_rel_gap"] = 0.01
+            solver.highs_options["time_limit"] = 2.0
+            solver.highs_options["threads"] = 4
+        if hasattr(solver, 'config'):
+            if hasattr(solver.config, 'mip_gap'):
+                solver.config.mip_gap = 0.01
+            if hasattr(solver.config, 'time_limit'):
+                solver.config.time_limit = 2.0
+    except Exception:
+        pass
+
     solver.solve(model, tee=False)
 
-    # Extract Results
-    p_ely_opt = np.array([pyo.value(model.p_ely[t]) for t in model.T])
-    p_grid_opt = np.array([pyo.value(model.p_grid[t]) for t in model.T])
-    p_re_opt = np.array([pyo.value(model.p_re_used[t]) for t in model.T])
-    p_curtail_opt = np.array([pyo.value(model.p_curtail[t]) for t in model.T])
-    ramp_opt = np.array([pyo.value(model.ramp[t]) for t in model.T])
-    soc_opt = np.array([pyo.value(model.soc_tank[t]) for t in model.T])
+    # Extract Results efficiently
+    p_ely_opt = np.fromiter((pyo.value(model.p_ely[t]) for t in model.T), dtype=float, count=T)
+    p_grid_opt = np.fromiter((pyo.value(model.p_grid[t]) for t in model.T), dtype=float, count=T)
+    p_re_opt = np.fromiter((pyo.value(model.p_re_used[t]) for t in model.T), dtype=float, count=T)
+    p_curtail_opt = np.fromiter((pyo.value(model.p_curtail[t]) for t in model.T), dtype=float, count=T)
+    ramp_up_opt = np.fromiter((pyo.value(model.ramp_up[t]) for t in model.T), dtype=float, count=T)
+    ramp_down_opt = np.fromiter((pyo.value(model.ramp_down[t]) for t in model.T), dtype=float, count=T)
+    ramp_opt = ramp_up_opt + ramp_down_opt
+    soc_opt = np.fromiter((pyo.value(model.soc_tank[t]) for t in model.T), dtype=float, count=T)
 
-    p_bess_ch_opt = np.array([pyo.value(model.p_bess_ch[t]) for t in model.T]) if has_bess else np.zeros(T)
-    p_bess_dis_opt = np.array([pyo.value(model.p_bess_dis[t]) for t in model.T]) if has_bess else np.zeros(T)
-    soc_bess_opt = np.array([pyo.value(model.soc_bess[t]) for t in model.T]) if has_bess else np.zeros(T)
+    p_bess_ch_opt = np.fromiter((pyo.value(model.p_bess_ch[t]) for t in model.T), dtype=float, count=T) if has_bess else np.zeros(T)
+    p_bess_dis_opt = np.fromiter((pyo.value(model.p_bess_dis[t]) for t in model.T), dtype=float, count=T) if has_bess else np.zeros(T)
+    soc_bess_opt = np.fromiter((pyo.value(model.soc_bess[t]) for t in model.T), dtype=float, count=T) if has_bess else np.zeros(T)
 
     h2_produced_kg = p_ely_opt * dt / kwh_per_kg_h2
     total_h2_kg = float(np.sum(h2_produced_kg))
@@ -198,8 +224,8 @@ def solve_dispatch(
     ammonia_produced_kg = total_h2_kg * 5.67
 
     # Financial & Carbon Calculations
-    grid_cost_rs = float(np.sum(p_grid_opt * dt * scenario_df["tariff_rs_kwh"].to_numpy()))
-    re_cost_rs = float(np.sum(p_re_opt * dt * scenario_df["re_lcoe_rs_kwh"].to_numpy()))
+    grid_cost_rs = float(np.sum(p_grid_opt * dt * tariff_arr))
+    re_cost_rs = float(np.sum(p_re_opt * dt * re_lcoe_arr))
     ramp_cost_rs = float(np.sum(ramp_opt * ramp_wear_penalty))
     bess_wear_cost_rs = float(np.sum((p_bess_ch_opt + p_bess_dis_opt) * dt * 0.20)) if has_bess else 0.0
     water_om_cost_rs = total_h2_kg * 2.50  # Rs 2.50/kg for demineralized water + consumables
