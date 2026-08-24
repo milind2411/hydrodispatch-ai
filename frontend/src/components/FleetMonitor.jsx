@@ -88,33 +88,33 @@ export default function FleetMonitor({ fleetData }) {
   return (
     <div className="space-y-6">
       {/* Fleet Overview Header Banner */}
-      <div className="glass-panel rounded-3xl p-6 shadow-2xl">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/10 pb-4 mb-4">
+      <div className="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-white/10 pb-3.5 mb-4">
           <div>
             <div className="flex items-center gap-2">
               <Server className="w-5 h-5 text-cyan-400" />
-              <h2 className="text-base font-bold text-white uppercase tracking-wider">
-                Multi-Stack Fleet Dispatch & Telemetry Monitor
+              <h2 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider">
+                Multi-Stack Fleet Dispatch Monitor
               </h2>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Real-time balance-of-plant orchestration across heterogeneous PEM, Alkaline, and SOEC cell architectures
+            <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+              Real-time balance-of-plant orchestration across heterogeneous PEM, Alkaline, and SOEC architectures
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <span className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 px-3.5 py-1.5 rounded-xl text-xs font-bold font-mono backdrop-blur-md">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              Plant Interlocks OK
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="flex items-center gap-1.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 px-3 py-1 rounded-xl text-xs font-bold font-mono backdrop-blur-md">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              Interlocks OK
             </span>
-            <span className="glass-pill text-slate-300 px-3.5 py-1.5 rounded-xl text-xs font-mono">
+            <span className="glass-pill text-slate-300 px-3 py-1 rounded-xl text-xs font-mono">
               H2 Purity: <strong className="text-white">99.999%</strong>
             </span>
           </div>
         </div>
 
         {/* Global Fleet Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5">
           <div className="glass-card p-3.5 rounded-2xl">
             <span className="text-[11px] text-slate-400 uppercase font-semibold">Total Fleet Power</span>
             <div className="flex items-baseline gap-1 mt-1">

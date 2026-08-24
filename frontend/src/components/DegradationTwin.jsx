@@ -45,26 +45,26 @@ export default function DegradationTwin() {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="glass-panel rounded-3xl p-6 shadow-2xl">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/10 pb-4 mb-4">
+      <div className="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-white/10 pb-3.5 mb-4">
           <div>
             <div className="flex items-center gap-2">
               <Cpu className="w-5 h-5 text-indigo-400" />
-              <h2 className="text-base font-bold text-white uppercase tracking-wider">
-                Electrochemical Digital Twin & Membrane Degradation Physics
+              <h2 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider">
+                Electrochemical Digital Twin
               </h2>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
               Polarization curves (V_cell = E_rev + η_act + η_ohm + η_mass) and dynamic aging trajectories
             </p>
           </div>
 
-          <div className="flex glass-pill p-1 rounded-xl text-xs font-bold">
+          <div className="flex glass-pill p-1 rounded-xl text-xs font-bold overflow-x-auto no-scrollbar shrink-0">
             {['PEM', 'Alkaline', 'SOEC'].map((t) => (
               <button
                 key={t}
                 onClick={() => setSelectedTech(t)}
-                className={`px-3.5 py-1.5 rounded-lg transition ${
+                className={`px-3.5 py-1.5 rounded-lg whitespace-nowrap transition ${
                   selectedTech === t ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/25' : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -75,7 +75,7 @@ export default function DegradationTwin() {
         </div>
 
         {/* Digital Twin Summary KPIs */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5">
           <div className="glass-card p-3.5 rounded-2xl">
             <span className="text-[11px] text-slate-400 uppercase font-semibold">Membrane Resistance</span>
             <div className="flex items-baseline gap-1 mt-1">
