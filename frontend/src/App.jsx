@@ -56,7 +56,10 @@ export default function App() {
 
   const getApiUrl = (endpoint) => {
     if (import.meta.env?.VITE_API_URL) {
-      const base = import.meta.env.VITE_API_URL.replace(/\/$/, '');
+      let base = import.meta.env.VITE_API_URL.replace(/\/$/, '');
+      if (!base.startsWith('http://') && !base.startsWith('https://')) {
+        base = `https://${base}`;
+      }
       return `${base}${endpoint}`;
     }
     if (typeof window !== 'undefined') {
