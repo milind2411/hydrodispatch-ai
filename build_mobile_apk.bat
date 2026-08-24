@@ -25,8 +25,16 @@ cd android
 call gradlew.bat assembleDebug
 if %errorlevel% neq 0 (
     echo.
-    echo [NOTE] If Gradle build requires Android SDK, you can also open Android Studio directly:
-    echo        Run 'npm run mobile:open' inside the 'frontend' folder.
+    echo ===========================================================================
+    echo [INFO] Android SDK is not detected in command line.
+    echo To build the APK with 1 click:
+    echo   1. Install Android Studio (free from developer.android.com/studio)
+    echo   2. Run 'npm run mobile:open' in the 'frontend' folder, then click Build APK!
+    echo.
+    echo [INSTANT ALTERNATIVE] You can install this app directly on any phone right now
+    echo                      without Android Studio by opening http://172.20.10.4:5173
+    echo                      in your mobile browser and tapping 'Install App'!
+    echo ===========================================================================
     pause
     exit /b %errorlevel%
 )
