@@ -3,6 +3,7 @@
 # ⚡ HydroDispatch AI
 ### Physics-Informed Real-Time Dispatch & Levelized Cost (LCOH) Co-Optimization Engine for Green Hydrogen & E-Fuel Production
 
+[![Live Demo](https://img.shields.io/badge/Vercel-Live%20Demo-black.svg?style=for-the-badge&logo=vercel&logoColor=white)](https://hydrodispatch-ai.vercel.app/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Pyomo](https://img.shields.io/badge/Pyomo-6.7+-FF6F00.svg?style=for-the-badge&logo=python&logoColor=white)](https://pyomo.org)
 [![HiGHS](https://img.shields.io/badge/Solver-HiGHS%20MILP-1565C0.svg?style=for-the-badge&logo=open-access&logoColor=white)](https://highs.dev)
@@ -12,6 +13,10 @@
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4+-38B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![PWA](https://img.shields.io/badge/PWA-Offline--First-06B6D4.svg?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+
+<p align="center">
+  <strong>🌐 Live App: <a href="https://hydrodispatch-ai.vercel.app/">hydrodispatch-ai.vercel.app</a></strong>
+</p>
 
 <p align="center">
   <strong>Bridging intermittent renewable generation (Solar PV + Wind) with multi-technology electrolyzer fleets (PEM, Alkaline, SOEC), Battery Energy Storage Systems (BESS), pressurized linepack buffer tanks, and dynamic Time-of-Day (ToD) electricity tariffs to minimize net LCOH (₹/kg), monetize co-produced Oxygen ($O_2$), and synthesize Green Ammonia ($NH_3$).</strong>
