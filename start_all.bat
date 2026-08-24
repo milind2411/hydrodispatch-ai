@@ -11,6 +11,6 @@ echo HydroDispatch AI Servers Running!
 echo ===================================================
 echo [Desktop] Frontend: http://localhost:5173
 echo [Desktop] Backend:  http://127.0.0.1:8000 / http://localhost:8000/docs
-echo [Mobile]  Frontend: http://10.0.55.40:5173
+echo [Mobile]  Frontend: http://172.20.10.4:5173
 echo ===================================================
 pause
