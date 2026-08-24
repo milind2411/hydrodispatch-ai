@@ -15,8 +15,6 @@ services:
     name: hydrodispatch-frontend
     runtime: static
     rootDir: frontend
-    region: oregon
-    plan: free
     buildCommand: "npm install && npm run build"
     staticPublishPath: "./dist"
     envVars:
