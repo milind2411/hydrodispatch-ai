@@ -55,6 +55,10 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState(null);
 
   const getApiUrl = (endpoint) => {
+    if (import.meta.env?.VITE_API_URL) {
+      const base = import.meta.env.VITE_API_URL.replace(/\/$/, '');
+      return `${base}${endpoint}`;
+    }
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
       if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
