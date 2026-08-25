@@ -45,6 +45,7 @@ def solve_dispatch(
     bess_capacity_kwh: float = 0.0,
     bess_power_kw: float = 0.0,
     o2_price_rs_kg: float = 0.0,
+    solver_time_limit: float = 30.0,
     custom_params: dict | None = None,
 ):
     """
@@ -56,6 +57,9 @@ def solve_dispatch(
     params = get_tech_params(ely_type, electrolyzer_max_kw)
     if custom_params:
         params.update(custom_params)
+        if "solver_time_limit" in custom_params:
+            solver_time_limit = float(custom_params["solver_time_limit"])
+
 
     min_turndown = params["min_turndown"]
     max_ramp_kw = params["max_ramp_kw"]
@@ -181,21 +185,21 @@ def solve_dispatch(
         except Exception:
             solver = pyo.SolverFactory("glpk")
 
-    # Configure runtime parameters for real-time dispatch: 1% MIP gap, 2.0s time limit
+    # Configure runtime parameters for real-time dispatch: 1% MIP gap, configurable solver time limit (default 30.0s)
     try:
         if hasattr(solver, 'options'):
             solver.options["mip_rel_gap"] = 0.01
-            solver.options["time_limit"] = 2.0
+            solver.options["time_limit"] = solver_time_limit
             solver.options["threads"] = 4
         if hasattr(solver, 'highs_options'):
             solver.highs_options["mip_rel_gap"] = 0.01
-            solver.highs_options["time_limit"] = 2.0
+            solver.highs_options["time_limit"] = solver_time_limit
             solver.highs_options["threads"] = 4
         if hasattr(solver, 'config'):
             if hasattr(solver.config, 'mip_gap'):
                 solver.config.mip_gap = 0.01
             if hasattr(solver.config, 'time_limit'):
-                solver.config.time_limit = 2.0
+                solver.config.time_limit = solver_time_limit
     except Exception:
         pass
 

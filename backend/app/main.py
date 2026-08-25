@@ -38,6 +38,7 @@ class ScenarioParams(BaseModel):
     bess_capacity_kwh: float = Field(default=0.0, ge=0.0, le=2000.0)
     bess_power_kw: float = Field(default=0.0, ge=0.0, le=1000.0)
     o2_price_rs_kg: float = Field(default=0.0, ge=0.0, le=50.0)
+    solver_time_limit: float = Field(default=30.0, ge=1.0, le=300.0)
 
 from fastapi.responses import HTMLResponse
 
@@ -332,6 +333,7 @@ def run_dispatch(params: ScenarioParams):
             bess_capacity_kwh=params.bess_capacity_kwh,
             bess_power_kw=params.bess_power_kw,
             o2_price_rs_kg=params.o2_price_rs_kg,
+            solver_time_limit=params.solver_time_limit,
         )
 
         base_schedule, base_summary = naive_baseline(
